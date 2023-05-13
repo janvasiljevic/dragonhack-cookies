@@ -1,15 +1,13 @@
-import { useAppStore } from '@/store';
+import MainNavbar from '@/components/MainNavbar';
 import { Flex } from '@mantine/core';
 import { useOutlet } from 'react-router-dom';
 
 const NavBarLayout = () => {
   const outlet = useOutlet();
 
-  const user = useAppStore((s) => s.user);
-
   return (
     <Flex w="100%" h="100vh" direction="column" sx={{ overflow: 'hidden' }}>
-      {user?.email}
+      <MainNavbar />
       <Flex
         sx={{ flexGrow: 1, overflowX: 'hidden', overflowY: 'auto' }}
         h="100%"

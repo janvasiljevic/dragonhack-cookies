@@ -1,11 +1,15 @@
-import { MantineProvider } from "@mantine/core";
-import { ModalsProvider } from "@mantine/modals";
-import { Notifications } from "@mantine/notifications";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense } from "react";
-import { RouterProvider } from "react-router-dom";
-import router from "./router";
-import { AxiosError } from "axios";
+import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
+import { Notifications } from '@mantine/notifications';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import router from './router';
+import { AxiosError } from 'axios';
+
+import '@fontsource/abril-fatface';
+import '@fontsource/anonymous-pro';
+import '@fontsource/source-sans-pro';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,8 +40,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MantineProvider
         theme={{
-          primaryColor: "pink",
-          primaryShade: 9,
+          primaryColor: 'grape',
+          primaryShade: 7,
+          fontFamily: 'Source Sans Pro',
+          headings: {
+            fontFamily: 'Abril Fatface',
+            fontWeight: 300,
+          },
+          fontFamilyMonospace: 'Anonymous Pro',
         }}
         withGlobalStyles
         withNormalizeCSS
@@ -54,14 +64,14 @@ function App() {
 }
 
 // Custom theme (other subprop)
-declare module "@mantine/core" {
+declare module '@mantine/core' {
   export interface MantineThemeOther {
     otherStuff: string;
   }
 }
 
 // Custom context modals
-declare module "@mantine/modals" {
+declare module '@mantine/modals' {
   export interface MantineModalsOverride {
     modals: typeof modals;
   }
