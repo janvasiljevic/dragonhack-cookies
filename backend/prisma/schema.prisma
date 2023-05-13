@@ -20,4 +20,80 @@ model User {
 
     email    String @unique
     password String
+
+    numberOfBooksBorrowed Int @default(0)
+
+    // Books that the user owns
+    ownedBooks Book[] @relation("book_to_owner")
+
+    // Books that the user has borrowed
+    borrowedBooks Book[] @relation("book_to_borrower")
+
+    friendsTo   User[] @relation("friendship")
+    friendsFrom User[] @relation("friendship")
+
+    // Achievements that the user has (e.g has 1 friend, has 10 books, etc)
+    achievements Achievement[]
+
+    // Reviews that that ohter users have left for this user
+    reviewsProfile UserReview[] @relation("subject_to_user")
+
+    // Reviews that this user has left for other users
+    reviewsLeft UserReview[] @relation("author_to_user")
+}
+
+// User reviews can be left by any user at the end of the interaction 
+model UserReview {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    rating Int // 1-5
+    review String
+
+    // Who was author of the review
+    author User   @relation("author_to_user", fields: [userId], references: [id])
+    userId String
+
+    // Who was the subject of the review
+    subject   User   @relation("subject_to_user", fields: [subjectId], references: [id])
+    subjectId String
+}
+
+model Book {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    status BookStatus @default(AVAILABLE)
+    title  String
+    isbn   String
+    price  Float?
+
+    owner   User   @relation("book_to_owner", fields: [ownerId], references: [id])
+    ownerId String
+
+    borrewer   User?   @relation("book_to_borrower", fields: [borrowerId], references: [id])
+    borrowerId String?
+}
+
+// Achievements are awarded to users when they reach certain milestones
+// The descriptions and points are manually set on the backend
+model Achievement {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name        String
+    description String
+    points      Int
+    User        User?   @relation(fields: [userId], references: [id])
+    userId      String?
+}
+
+enum BookStatus {
+    AVAILABLE
+    BORROWED
+    IN_TRANSTT
+    LOST
 }
