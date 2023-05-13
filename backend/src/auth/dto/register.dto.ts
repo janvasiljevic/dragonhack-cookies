@@ -6,4 +6,10 @@ export class RegisterUserDto {
 
   @ApiProperty({ example: 'secret' })
   password: string;
+
+  @ApiProperty({ example: 'Matej' })
+  firstName: string;
+
+  @ApiProperty({ example: 'Piskotki' })
+  lastName: string;
 }

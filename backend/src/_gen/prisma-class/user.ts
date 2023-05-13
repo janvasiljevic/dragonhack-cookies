@@ -20,6 +20,12 @@ export class User {
   @ApiProperty({ type: String })
   password: string;
 
+  @ApiProperty({ type: String })
+  firstName: string = 'Ime';
+
+  @ApiProperty({ type: String })
+  lastName: string = 'Priimek';
+
   @ApiProperty({ type: Number })
   numberOfBooksBorrowed: number;
 

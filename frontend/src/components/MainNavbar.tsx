@@ -21,6 +21,7 @@ import {
   IconSettings,
   IconTimeline,
   IconUser,
+  IconUsersGroup,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -132,6 +133,11 @@ const MainNavbar = () => {
       icon: <IconUser size={20} />,
       onclick: () => navigate(`/profile/${user?.id}`),
     },
+    {
+      name: 'Friends',
+      icon: <IconUsersGroup size={20} />,
+      onclick: () => navigate('/friends'),
+    },
   ];
 
   const logout = () => {
@@ -141,7 +147,8 @@ const MainNavbar = () => {
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name} onClick={() => tab.onclick()}>
-      {tab.name}
+      <Box> {tab.icon}</Box>
+      <Box> {tab.name} </Box>
     </Tabs.Tab>
   ));
 

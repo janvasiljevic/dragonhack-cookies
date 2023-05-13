@@ -31,13 +31,15 @@ export class AuthService {
     return { user, token };
   }
 
-  async register({ email, password }: RegisterUserDto) {
+  async register({ email, password, firstName, lastName }: RegisterUserDto) {
     const hashedPassword = bycrypt.hashSync(password, 10);
 
     const user = await this.prisma.user.create({
       data: {
         email,
         password: hashedPassword,
+        firstName,
+        lastName,
       },
     });
 

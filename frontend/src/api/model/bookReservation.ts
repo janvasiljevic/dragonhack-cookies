@@ -5,16 +5,15 @@
  * API for DH - Piskotki
  * OpenAPI spec version: 1.0
  */
+import type { Book } from './book';
 import type { User } from './user';
 
-export interface UserReview {
+export interface BookReservation {
   id: string;
   createdAt: string;
   updatedAt: string;
-  rating: number;
-  review: string;
-  author: User;
+  book: Book;
+  bookId: string;
+  user: User;
   userId: string;
-  subject: User;
-  subjectId: string;
 }
