@@ -40,7 +40,7 @@ export class Book {
   ownerId: string;
 
   @ApiPropertyOptional({ type: () => User })
-  borrewer?: User;
+  borrower?: User;
 
   @ApiPropertyOptional({ type: String })
   borrowerId?: string;

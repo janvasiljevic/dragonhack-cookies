@@ -1,5 +1,5 @@
 import { User } from './user';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class Achievement {
   @ApiProperty({ type: String })
@@ -20,9 +20,6 @@ export class Achievement {
   @ApiProperty({ type: Number })
   points: number;
 
-  @ApiPropertyOptional({ type: () => User })
-  User?: User;
-
-  @ApiPropertyOptional({ type: String })
-  userId?: string;
+  @ApiProperty({ isArray: true, type: () => User })
+  User: User[];
 }
