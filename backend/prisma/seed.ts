@@ -98,6 +98,7 @@ async function generateBookReservations() {
   await createReservation('matej_hp', 'anja');
   await createReservation('jan_1984', 'matjaz');
   await createReservation('matej_1984', 'anja');
+  await createReservation('jan_1984', 'matej');
 
   log('Added book reservations to database');
 }

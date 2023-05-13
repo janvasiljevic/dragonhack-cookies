@@ -20,8 +20,10 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { BookReservation } from 'src/_gen/prisma-class/book_reservation';
+import { Book } from 'src/_gen/prisma-class/book';
 
 @Controller('borrow')
 @ApiTags('borrow')
@@ -57,7 +59,8 @@ export class BorrowController {
 
   @Get('reservations/book/:bookId')
   @ApiOperation({
-    summary: 'Returns all userIds that reserved this book',
+    summary:
+      'Returns all reservations including the book and book availability',
   })
   @ApiParam({
     name: 'bookId',
@@ -76,6 +79,28 @@ export class BorrowController {
     return this.borrowService.getBookReservations(bookId);
   }
 
+  @Get('reservations/owner/:userId')
+  @ApiParam({
+    name: 'userId',
+    type: String,
+    description: 'id of the user',
+    required: true,
+  })
+  @ApiOperation({
+    summary:
+      'Returns all reservations for books owned by userId and book availability',
+  })
+  @ApiOkResponse({
+    description: 'All reservations',
+    type: [BookReservation],
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+  })
+  getOwnerReservations(@Param('userId') userId: string) {
+    return this.borrowService.getOwnerReservations(userId);
+  }
+
   @Get('reservations/user/:userId')
   @ApiParam({
     name: 'userId',
@@ -84,7 +109,7 @@ export class BorrowController {
     required: true,
   })
   @ApiOperation({
-    summary: 'Returns all reservations for books owned by userId',
+    summary: 'Returns all resrvations made by userId and book availability',
   })
   @ApiOkResponse({
     description: 'All reservations',
@@ -95,5 +120,90 @@ export class BorrowController {
   })
   getUserReservations(@Param('userId') userId: string) {
     return this.borrowService.getUserReservations(userId);
+  }
+
+  @Get('reservations/accept/:reservationId')
+  @ApiParam({
+    name: 'reservationId',
+    type: String,
+    description: 'id of the reservation',
+    required: true,
+  })
+  @ApiOperation({
+    summary: 'Book owner accepts one reservation',
+  })
+  @ApiOkResponse({
+    description: 'OK',
+  })
+  @ApiNotFoundResponse({
+    description: 'Reservation not found',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User is not the owner of the book',
+  })
+  @ApiBadRequestResponse({
+    description: 'Book is already borrowed',
+  })
+  acceptReservation(
+    @CurrentUser() { userId }: ExtractedUAT,
+    @Param('reservationId') id: string,
+  ) {
+    return this.borrowService.acceptReservation(userId, id);
+  }
+
+  @Get('reservations/return/:bookId')
+  @ApiParam({
+    name: 'bookId',
+    type: String,
+    description: 'id of the book',
+    required: true,
+  })
+  @ApiOperation({
+    summary: "The owner got the book back, so it's available again",
+  })
+  @ApiOkResponse({
+    description: 'Updated book',
+    type: Book,
+  })
+  @ApiNotFoundResponse({
+    description: 'Book not found',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User is not the owner of the book',
+  })
+  @ApiBadRequestResponse({
+    description: 'Book is not borrowed',
+  })
+  returnBook(
+    @CurrentUser() { userId }: ExtractedUAT,
+    @Param('bookId') bookId: string,
+  ) {
+    return this.borrowService.returnBook(userId, bookId);
+  }
+
+  @Delete('reservations/cancel/:reservationId')
+  @ApiParam({
+    name: 'reservationId',
+    type: String,
+    description: 'id of the reservation',
+    required: true,
+  })
+  @ApiOperation({
+    summary: 'Cancel reservation',
+  })
+  @ApiOkResponse({
+    description: 'Reservation canceled',
+  })
+  @ApiNotFoundResponse({
+    description: 'Reservation not found',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User is not the owner of the book or reservation',
+  })
+  cancleReservation(
+    @CurrentUser() { userId }: ExtractedUAT,
+    @Param('reservationId') reservationId: string,
+  ) {
+    return this.borrowService.cancelReservation(userId, reservationId);
   }
 }
