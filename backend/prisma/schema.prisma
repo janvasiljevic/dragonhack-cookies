@@ -41,6 +41,8 @@ model User {
 
     // Reviews that this user has left for other users
     reviewsLeft UserReview[] @relation("author_to_user")
+
+    reservations BookReservation[]
 }
 
 // User reviews can be left by any user at the end of the interaction 
@@ -75,6 +77,8 @@ model Book {
     isbn        String
     price       Float?
 
+    reservations BookReservation[]
+
     owner   User   @relation("book_to_owner", fields: [ownerId], references: [id])
     ownerId String
 
@@ -83,6 +87,18 @@ model Book {
 
     borrowDate DateTime?
     returnDate DateTime?
+}
+
+model BookReservation {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    book   Book   @relation(fields: [bookId], references: [id])
+    bookId String
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
 }
 
 // Achievements are awarded to users when they reach certain milestones

@@ -1,3 +1,4 @@
+import { BookReservation } from './book_reservation';
 import { User } from './user';
 import { BookStatus } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -32,6 +33,9 @@ export class Book {
 
   @ApiPropertyOptional({ type: Number })
   price?: number;
+
+  @ApiProperty({ isArray: true, type: () => BookReservation })
+  reservations: BookReservation[];
 
   @ApiProperty({ type: () => User })
   owner: User;

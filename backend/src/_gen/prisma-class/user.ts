@@ -1,6 +1,7 @@
 import { Book } from './book';
 import { Achievement } from './achievement';
 import { UserReview } from './user_review';
+import { BookReservation } from './book_reservation';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class User {
@@ -42,4 +43,7 @@ export class User {
 
   @ApiProperty({ isArray: true, type: () => UserReview })
   reviewsLeft: UserReview[];
+
+  @ApiProperty({ isArray: true, type: () => BookReservation })
+  reservations: BookReservation[];
 }

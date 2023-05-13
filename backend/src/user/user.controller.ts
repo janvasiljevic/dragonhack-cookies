@@ -61,11 +61,17 @@ export class UserController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Not implemented',
+  })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Not implemented',
+  })
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }

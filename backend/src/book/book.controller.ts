@@ -83,6 +83,9 @@ export class BookController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Not implemented',
+  })
   update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
     return this.bookService.update(+id, updateBookDto);
   }

@@ -9,6 +9,7 @@ const log = (content: string) => {
 };
 
 const deleteAll = async () => {
+  await prisma.bookReservation.deleteMany({});
   await prisma.book.deleteMany({});
   await prisma.user.deleteMany({});
   await prisma.userReview.deleteMany({});
@@ -22,10 +23,10 @@ const genereateUsers = async () => {
 
   await prisma.user.createMany({
     data: [
-      { email: 'matej@piskotki.si', password },
-      { email: 'anja@piskotki.si', password },
-      { email: 'matjaz@piskotki.si', password },
-      { email: 'jan@piskotki.si', password },
+      { id: 'matej', email: 'matej@piskotki.si', password },
+      { id: 'anja', email: 'anja@piskotki.si', password },
+      { id: 'matjaz', email: 'matjaz@piskotki.si', password },
+      { id: 'jan', email: 'jan@piskotki.si', password },
     ],
   });
 
@@ -39,6 +40,7 @@ const generateBooks = async () => {
     await prisma.book.createMany({
       data: [
         {
+          id: `${user.id}_hp`,
           title: 'Harry Potter',
           author: 'J. K. Rowling',
           ownerId: user.id,
@@ -47,6 +49,7 @@ const generateBooks = async () => {
           coverUrl: 'https://m.media-amazon.com/images/I/71-++hbbERL.jpg',
         },
         {
+          id: `${user.id}_witcher`,
           title: 'Witcher',
           author: 'Andrzej Sapkowski',
           ownerId: user.id,
@@ -56,6 +59,7 @@ const generateBooks = async () => {
             'https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg',
         },
         {
+          id: `${user.id}_1984`,
           title: '1984',
           author: 'George Orwell',
           ownerId: user.id,
@@ -71,10 +75,38 @@ const generateBooks = async () => {
   log('Added books to database');
 };
 
+async function createReservation(bookId: string, userId: string) {
+  await prisma.bookReservation.create({
+    data: {
+      book: {
+        connect: {
+          id: bookId,
+        },
+      },
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+  });
+}
+
+async function generateBookReservations() {
+  await createReservation('matej_hp', 'jan');
+  await createReservation('matej_hp', 'matjaz');
+  await createReservation('matej_hp', 'anja');
+  await createReservation('jan_1984', 'matjaz');
+  await createReservation('matej_1984', 'anja');
+
+  log('Added book reservations to database');
+}
+
 async function main() {
   await deleteAll();
   await genereateUsers();
   await generateBooks();
+  await generateBookReservations();
 }
 
 main()
