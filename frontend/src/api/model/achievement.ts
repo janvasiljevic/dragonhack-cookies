@@ -14,6 +14,5 @@ export interface Achievement {
   name: string;
   description: string;
   points: number;
-  User?: User;
-  userId?: string;
+  User: User[];
 }

@@ -43,7 +43,13 @@ export class AuthController {
   ): Promise<User> {
     const { user, token } = await this.authService.loginForUser(body.email);
 
-    response.cookie('auth', token, { httpOnly: true, maxAge: 86400 });
+    const expirationDate = new Date(Date.now() + 86400 * 1000);
+
+    response.cookie('auth', token, {
+      httpOnly: true,
+      expires: expirationDate,
+      maxAge: 86400 * 1000,
+    });
 
     this.logger.log(`User ${user.email} logged in`);
 

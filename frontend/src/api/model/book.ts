@@ -14,10 +14,15 @@ export interface Book {
   updatedAt: string;
   status: BookStatus;
   title: string;
+  author: string;
+  description: string;
+  coverUrl: string;
   isbn: string;
   price?: number;
   owner: User;
   ownerId: string;
-  borrewer?: User;
+  borrower?: User;
   borrowerId?: string;
+  borrowDate?: string;
+  returnDate?: string;
 }
