@@ -12,17 +12,6 @@ async function bootstrap() {
     .setTitle('DH - Piskotki')
     .setDescription('API for DH - Piskotki')
     .setVersion('1.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'JWT-auth',
-    )
     .build();
 
   app.useGlobalPipes(
@@ -33,6 +22,10 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.use(cookieParser());
+  app.enableCors({
+    credentials: true,
+    origin: ['http://localhost:3000'],
+  });
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

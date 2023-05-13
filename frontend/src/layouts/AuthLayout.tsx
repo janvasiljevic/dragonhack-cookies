@@ -1,49 +1,35 @@
-import { useCheckAuth } from '@/api/auth/auth';
-import useAxiosAuthInterceptorHook from '@/hooks/axiosAuthIntereptorHook';
-import { useUserStore } from '@/store';
+import { useAuthControllerProfile } from '@/api/auth/auth';
+import { useAppStore } from '@/store';
 import { showNotification } from '@mantine/notifications';
-import { useEffect } from 'react';
 import { useNavigate, useOutlet } from 'react-router-dom';
 
 const AuthLayout = () => {
   const outlet = useOutlet();
   const navigate = useNavigate();
 
-  //   const isAxiosReady = useAxiosAuthInterceptorHook();
+  const setUser = useAppStore((s) => s.setUser);
+  const clearAllUserData = useAppStore((s) => s.clearAllUserDatas);
 
-  //   const checkStatus = useCheckAuth({
-  //     query: {
-  //       enabled: isAxiosReady,
-  //       onError(e) {
-  //         unAuth();
-  //       },
-  //       onSuccess({ facultyCode, role, username }) {
-  //         user.setAll({
-  //           facultyCode,
-  //           role,
-  //           username,
-  //         });
-  //       },
-  //     },
-  //   });
+  useAuthControllerProfile({
+    query: {
+      onError() {
+        unAuth();
+      },
+      onSuccess(data) {
+        setUser(data);
+      },
+    },
+  });
 
-  //   const unAuth = () => {
-  //     // showNotification({
-  //     //   title: t("notifications.401.title"),
-  //     //   message: t("notifications.401.message"),
-  //     // });
+  const unAuth = () => {
+    showNotification({
+      title: 'Unauthorized',
+      message: 'Get debooked',
+    });
 
-  //     user.clearAll();
-  //     navigate("/");
-  //   };
-
-  //   useEffect(() => {
-  //     if (!user.getToken()) return unAuth();
-
-  //     checkStatus.refetch();
-  //   }, []);
-
-  //   if (!isAxiosReady) return <></>;
+    clearAllUserData();
+    navigate('/');
+  };
 
   return <> {outlet}</>;
 };
