@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: db
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: api
+      POSTGRES_PASSWORD: supersecure
+      POSTGRES_DB: hackathon
+    ports:
+      - "13432:5432"
+    networks:
+      - dh-net
+
+  api:
+    container_name: api
+    build:
+      dockerfile: ${PWD}/docker/backend/Dockerfile
+      context: ./backend 
+    restart: always
+    volumes:
+      - ./backend:/usr/src/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - dh-net
+
+  frontend:
+    container_name: frontend
+    build:
+      dockerfile: ${PWD}/docker/frontend/Dockerfile
+      context: ./frontend
+    volumes:
+      - ./frontend:/usr/src/app
+    depends_on:
+      - db
+
+
+networks:
+  dh-net:
+    driver: bridge
