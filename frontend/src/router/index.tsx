@@ -1,20 +1,30 @@
-import AuthLayout from "@/layouts/AuthLayout";
+import AuthLayout from '@/layouts/AuthLayout';
 
-import LoginPage from "@/pages/LoginPage";
-import NotFoundPage from "@/pages/NotFoundPage";
+import LoginPage from '@/pages/LoginPage';
+import NotFoundPage from '@/pages/NotFoundPage';
+import ProfilePage from '@/pages/ProfilePage';
 
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from 'react-router-dom';
+
+export type ProfileParams = {
+  userId: string;
+};
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <LoginPage />,
   },
   {
-    path: "/",
+    path: '/',
     element: <AuthLayout />,
     errorElement: <NotFoundPage />,
-    children: [],
+    children: [
+      {
+        path: '/profile/:userId',
+        element: <ProfilePage />,
+      },
+    ],
   },
 ]);
 

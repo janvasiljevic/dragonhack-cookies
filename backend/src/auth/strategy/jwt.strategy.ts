@@ -12,15 +12,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       ignoreExpiration: false,
-      secretOrKey: 'My random secret key never let others',
+      secretOrKey: 'todo',
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          // @ts-expect-error cookies is not defined in Request
-          const data = request?.cookies['auth-cookie'];
+          // @ts-expect-error cookies is not defined on Request
+          const data = request?.cookies['auth'];
 
           if (!data) return null;
 
-          return data.token;
+          return data;
         },
       ]),
     });

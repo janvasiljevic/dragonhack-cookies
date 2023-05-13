@@ -36,6 +36,8 @@ services:
       context: ./frontend
     volumes:
       - ./frontend:/usr/src/app
+    ports:
+      - "3000:3000"
     depends_on:
       - db
 
