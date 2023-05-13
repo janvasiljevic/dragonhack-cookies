@@ -69,7 +69,7 @@ func fetchOpenAPISchema(host string) (string, error) {
 
 	fmt.Printf("Fetching OpenAPI schema from %s\n", host)
 
-	resp, err := http.Get(fmt.Sprintf("%s/v3/api-docs", host))
+	resp, err := http.Get(fmt.Sprintf("%s/api-json", host))
 	if err != nil {
 		return "", err
 	}

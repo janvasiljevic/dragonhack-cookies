@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import {
   IUATPayload,
@@ -14,8 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       ignoreExpiration: false,
       secretOrKey: 'todo',
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          // @ts-expect-error cookies is not defined on Request
+        (request: any) => {
           const data = request?.cookies['auth'];
 
           if (!data) return null;

@@ -1,8 +1,10 @@
 import AuthLayout from '@/layouts/AuthLayout';
+import NavBarLayout from '@/layouts/NavBarLayout';
 
 import LoginPage from '@/pages/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import ProfilePage from '@/pages/ProfilePage';
+import TimelinePage from '@/pages/TimelinePage';
 
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -21,8 +23,18 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       {
-        path: '/profile/:userId',
-        element: <ProfilePage />,
+        path: '/',
+        element: <NavBarLayout />,
+        children: [
+          {
+            path: '/profile/:userId',
+            element: <ProfilePage />,
+          },
+          {
+            path: '/timeline',
+            element: <TimelinePage />,
+          },
+        ],
       },
     ],
   },
