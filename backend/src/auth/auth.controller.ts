@@ -13,8 +13,8 @@ import { AuthService } from './auth.service';
 import { LoginUserLocalDto } from './dto/local.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { LocalAuthGuard } from './guard/local-auth.guard';
-import { UserController } from 'src/user/user.controller';
-import { User } from 'src/_gen/prisma-class/user';
+import { User } from '@prisma/client';
+import { User as UserDto } from 'src/_gen/prisma-class/user';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -27,7 +27,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login a user' })
   @ApiOkResponse({
     description: 'User logged in. Sets the cookie and returns the user',
-    type: User,
+    type: UserDto,
   })
   @UseGuards(LocalAuthGuard)
   login(@Body() body: LoginUserLocalDto): Promise<User> {
@@ -37,6 +37,10 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @Public()
+  @ApiOkResponse({
+    description: 'User registered. Sets the cookie and returns the user',
+    type: UserDto,
+  })
   register(@Body() body: RegisterUserDto): Promise<User> {
     return this.authService.register(body);
   }
