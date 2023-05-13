@@ -18,13 +18,14 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
+  ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Book } from 'src/_gen/prisma-class/book';
 import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('book')
+@ApiTags('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
