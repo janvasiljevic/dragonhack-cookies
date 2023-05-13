@@ -19,6 +19,15 @@ export class Book {
   title: string;
 
   @ApiProperty({ type: String })
+  author: string;
+
+  @ApiProperty({ type: String })
+  description: string;
+
+  @ApiProperty({ type: String })
+  coverUrl: string;
+
+  @ApiProperty({ type: String })
   isbn: string;
 
   @ApiPropertyOptional({ type: Number })
@@ -35,4 +44,10 @@ export class Book {
 
   @ApiPropertyOptional({ type: String })
   borrowerId?: string;
+
+  @ApiPropertyOptional({ type: Date })
+  borrowDate?: Date;
+
+  @ApiPropertyOptional({ type: Date })
+  returnDate?: Date;
 }

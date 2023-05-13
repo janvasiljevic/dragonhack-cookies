@@ -4,7 +4,7 @@ datasource db {
 }
 
 generator client {
-    provider = "prisma-client-js"
+    provider      = "prisma-client-js"
     binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
@@ -25,7 +25,7 @@ model User {
     numberOfBooksBorrowed Int @default(0)
 
     // Books that the user owns
-    ownedBooks Book[] @relation("book_to_owner")
+    ownedBooks Book[] @relation("book_to_owner") 
 
     // Books that the user has borrowed
     borrowedBooks Book[] @relation("book_to_borrower")
@@ -67,15 +67,22 @@ model Book {
     updatedAt DateTime @updatedAt
 
     status BookStatus @default(AVAILABLE)
-    title  String
-    isbn   String
-    price  Float?
+
+    title       String
+    author      String
+    description String
+    coverUrl    String
+    isbn        String
+    price       Float?
 
     owner   User   @relation("book_to_owner", fields: [ownerId], references: [id])
     ownerId String
 
     borrewer   User?   @relation("book_to_borrower", fields: [borrowerId], references: [id])
     borrowerId String?
+
+    borrowDate DateTime?
+    returnDate DateTime?
 }
 
 // Achievements are awarded to users when they reach certain milestones
