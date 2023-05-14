@@ -129,7 +129,7 @@ export class BorrowService {
     });
   }
 
-  async returnBook(userId: string, bookId: string, liked: boolean) {
+  async returnBook(userId: string, bookId: string) {
     const book = await this.prisma.book.findUnique({
       where: {
         id: bookId,
@@ -158,21 +158,6 @@ export class BorrowService {
         },
       },
     });
-
-    if (liked) {
-      await this.prisma.user.update({
-        where: {
-          id: book.borrowerId,
-        },
-        data: {
-          likedBooks: {
-            connect: {
-              id: bookId,
-            },
-          },
-        },
-      });
-    }
 
     return await this.prisma.book.update({
       where: {

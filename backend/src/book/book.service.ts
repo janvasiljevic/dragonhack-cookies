@@ -11,12 +11,14 @@ import { GoogleAPIBook } from './interfaces/google-api-book';
 import { AxiosError } from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Book, Prisma } from '@prisma/client';
+import { PineconeService } from 'src/pinecone/pinecone.service';
 
 @Injectable()
 export class BookService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly httpService: HttpService,
+    private readonly pinecone: PineconeService,
   ) {}
 
   private async queryGoogleBookAPI(query: string): Promise<GoogleAPIBook> {
@@ -39,8 +41,58 @@ export class BookService {
     return data;
   }
 
+  private async getEmbedding(description: string): Promise<any> {
+    const headersRequest = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer Ak0iZQvsaWkvwxV215C4KqYGUCNc1n', // KIDS, DON'T DO THIS AT HOME
+    };
+    const { data } = await firstValueFrom(
+      this.httpService
+        .post<any>(
+          'https://openai-api.meetings.bio/api/openai/embeddings',
+          {
+            model: 'text-embedding-ada-002',
+            input: description,
+          },
+          {
+            headers: headersRequest,
+          },
+        )
+        .pipe(
+          catchError((error: AxiosError) => {
+            console.log(error.response.data);
+            throw new NotFoundException('Error');
+          }),
+        ),
+    );
+
+    return data;
+  }
+
   async createFromISBN(userID: string, createFromISBN: CreateBookISBNDto) {
     const book = await this.queryGoogleBookAPI(`isbn:${createFromISBN.isbn}`);
+
+    let embedding = await this.getEmbedding(
+      book.items[0].volumeInfo.description,
+    );
+    embedding = embedding.data[0].embedding;
+    const index = this.pinecone.pineconeClient.Index('knjige');
+
+    await index.delete1({
+      ids: [book.items[0].volumeInfo.title],
+    });
+
+    const upsertRequest = {
+      vectors: [
+        {
+          id: book.items[0].volumeInfo.title,
+          values: embedding,
+        },
+      ],
+    };
+    await index.upsert({
+      upsertRequest,
+    });
 
     return await this.prisma.book.create({
       data: {
@@ -103,5 +155,43 @@ export class BookService {
         id,
       },
     });
+  }
+
+  async like(userId: string, bookId: string, liked: boolean) {
+    const book = await this.prisma.book.findUnique({
+      where: {
+        id: bookId,
+      },
+    });
+
+    if (!book) throw new NotFoundException('Knjiga ne obstaja');
+
+    if (liked) {
+      return await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          likedBooks: {
+            connect: {
+              id: bookId,
+            },
+          },
+        },
+      });
+    } else {
+      return await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          likedBooks: {
+            disconnect: {
+              id: bookId,
+            },
+          },
+        },
+      });
+    }
   }
 }

@@ -82,12 +82,12 @@ export class BookController {
     return this.bookService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('/like/:bookId/:liked')
   @ApiOperation({
-    summary: 'Not implemented',
+    summary: 'Like or unlike the book with ID',
   })
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.bookService.update(+id, updateBookDto);
+  like(@CurrentUser() { userId }: ExtractedUAT, @Param('bookId') bookId: string, @Param('liked') liked: boolean) {
+    return this.bookService.like(userId, bookId, liked);
   }
 
   @Get('search/:search')
