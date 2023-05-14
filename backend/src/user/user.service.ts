@@ -24,6 +24,7 @@ export class UserService {
         friendsFrom: true,
         reviewsLeft: true,
         reviewsProfile: true,
+        likedBooks: true,
       },
     });
 

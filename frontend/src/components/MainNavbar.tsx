@@ -122,11 +122,11 @@ const MainNavbar = () => {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
 
   const tabs: TabItem[] = [
-    {
-      name: 'Timeline',
-      icon: <IconTimeline size={20} />,
-      onclick: () => navigate('/timeline'),
-    },
+    // {
+    //   name: 'Timeline',
+    //   icon: <IconTimeline size={20} />,
+    //   onclick: () => navigate('/timeline'),
+    // },
     {
       name: 'Explore',
       icon: <IconSearch size={20} />,
@@ -137,11 +137,11 @@ const MainNavbar = () => {
       icon: <IconUser size={20} />,
       onclick: () => navigate(`/profile/${user?.id}`),
     },
-    {
-      name: 'Friends',
-      icon: <IconUsersGroup size={20} />,
-      onclick: () => navigate('/friends'),
-    },
+    // {
+    //   name: 'Friends',
+    //   icon: <IconUsersGroup size={20} />,
+    //   onclick: () => navigate('/friends'),
+    // },
   ];
 
   const logout = () => {

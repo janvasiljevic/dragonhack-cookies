@@ -27,4 +27,5 @@ export interface Book {
   borrowerId?: string;
   borrowDate?: string;
   returnDate?: string;
+  likedBy: User[];
 }

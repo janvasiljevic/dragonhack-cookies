@@ -44,11 +44,7 @@ export class BorrowService {
         bookId: id,
       },
       include: {
-        book: {
-          select: {
-            status: true,
-          },
-        },
+        book: true,
         user: true,
       },
     });
@@ -62,11 +58,7 @@ export class BorrowService {
         },
       },
       include: {
-        book: {
-          select: {
-            status: true,
-          },
-        },
+        book: true,
         user: true,
       },
     });
@@ -78,11 +70,7 @@ export class BorrowService {
         userId: id,
       },
       include: {
-        book: {
-          select: {
-            status: true,
-          },
-        },
+        book: true,
         user: true,
       },
     });
