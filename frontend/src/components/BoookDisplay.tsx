@@ -7,8 +7,8 @@ const useStyles = createStyles((t) => ({
     alignItems: 'center',
     border: '1px solid black',
     borderRadius: '5px',
-    height: rem(250),
-    width: rem(180),
+    width: '100%',
+    height: '100%',
     backgroundSize: 'cover',
     position: 'relative',
     flexDirection: 'column',
@@ -55,7 +55,6 @@ const BookDisplay = ({ book }: Props) => {
 
   return (
     <Flex
-      key={book.id}
       className={cx(classes.bookFlex, {
         [classes.bookFlexDisabled]: book.status !== 'AVAILABLE',
       })}

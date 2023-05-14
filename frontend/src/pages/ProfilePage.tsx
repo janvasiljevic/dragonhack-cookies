@@ -127,7 +127,9 @@ const ProfilePage = () => {
         </Title>
         <Flex direction="row" gap={'lg'} pt="lg">
           {userProfileData.ownedBooks.map((book) => (
-            <BookDisplay book={book} />
+            <Box style={{ height: rem(300), width: rem(180) }}>
+              <BookDisplay book={book} />
+            </Box>
           ))}
         </Flex>
         {user?.id === userProfileData.id && (

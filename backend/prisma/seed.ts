@@ -23,10 +23,34 @@ const genereateUsers = async () => {
 
   await prisma.user.createMany({
     data: [
-      { id: 'matej', email: 'matej@piskotki.si', password },
-      { id: 'anja', email: 'anja@piskotki.si', password },
-      { id: 'matjaz', email: 'matjaz@piskotki.si', password },
-      { id: 'jan', email: 'jan@piskotki.si', password },
+      {
+        firstName: 'Matej',
+        lastName: 'Piskotek',
+        id: 'matej',
+        email: 'matej@piskotki.si',
+        password,
+      },
+      {
+        lastName: 'Piskotek',
+        firstName: 'Anja',
+        id: 'anja',
+        email: 'anja@piskotki.si',
+        password,
+      },
+      {
+        firstName: 'Matjaz',
+        lastName: 'Piskotek',
+        id: 'matjaz',
+        email: 'matjaz@piskotki.si',
+        password,
+      },
+      {
+        lastName: 'Piskotek',
+        firstName: 'Eva',
+        id: 'jan',
+        email: 'jan@piskotki.si',
+        password,
+      },
     ],
   });
 

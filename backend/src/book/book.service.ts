@@ -10,6 +10,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { GoogleAPIBook } from './interfaces/google-api-book';
 import { AxiosError } from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Book, Prisma } from '@prisma/client';
 
 @Injectable()
 export class BookService {
@@ -55,6 +56,15 @@ export class BookService {
 
   async findAll() {
     return await this.prisma.book.findMany();
+  }
+
+  async search(query: string) {
+    // Search the books using raw SQL and postgresql trigram similarity
+    const result = await this.prisma.$queryRaw<Book[]>(
+      Prisma.sql`SELECT * FROM public."Book" WHERE SIMILARITY(title, ${query}) > 0.2 OR SIMILARITY(author, ${query}) > 0.2 ORDER BY SIMILARITY(title, ${query});`,
+    );
+
+    return result;
   }
 
   async findOne(id: string) {

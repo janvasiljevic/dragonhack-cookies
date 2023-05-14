@@ -2,10 +2,13 @@ import { useAppStore } from '@/store';
 import {
   Box,
   Burger,
+  Button,
   Container,
+  Drawer,
   Flex,
   Group,
   Menu,
+  Stack,
   Tabs,
   Text,
   UnstyledButton,
@@ -18,9 +21,9 @@ import {
   IconChevronDown,
   IconLogout,
   IconSearch,
-  IconSettings,
   IconTimeline,
   IconUser,
+  IconUsersGroup,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -67,7 +70,7 @@ const useStyles = createStyles((t) => ({
   },
 
   tabs: {
-    [t.fn.smallerThan('sm')]: {
+    [t.fn.smallerThan('xs')]: {
       display: 'none',
     },
   },
@@ -81,6 +84,8 @@ const useStyles = createStyles((t) => ({
     height: rem(38),
     color: t.white,
     backgroundColor: 'transparent',
+    flexDirection: 'row',
+    display: 'flex',
 
     borderColor: t.fn.variant({
       variant: 'filled',
@@ -113,7 +118,7 @@ const MainNavbar = () => {
   const clearUserData = useAppStore((state) => state.clearAllUserDatas);
 
   const { classes, theme, cx } = useStyles();
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
 
   const tabs: TabItem[] = [
@@ -125,12 +130,17 @@ const MainNavbar = () => {
     {
       name: 'Explore',
       icon: <IconSearch size={20} />,
-      onclick: () => navigate('/search'),
+      onclick: () => navigate('/explore'),
     },
     {
       name: 'Profile',
       icon: <IconUser size={20} />,
       onclick: () => navigate(`/profile/${user?.id}`),
+    },
+    {
+      name: 'Friends',
+      icon: <IconUsersGroup size={20} />,
+      onclick: () => navigate('/friends'),
     },
   ];
 
@@ -140,83 +150,115 @@ const MainNavbar = () => {
   };
 
   const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab.name} key={tab.name} onClick={() => tab.onclick()}>
-      {tab.name}
+    <Tabs.Tab
+      icon={tab.icon}
+      value={tab.name}
+      key={tab.name}
+      onClick={() => tab.onclick()}
+    >
+      <Box> {tab.name} </Box>
     </Tabs.Tab>
   ));
 
+  const drawerItems = tabs.map((tab) => (
+    <Button leftIcon={tab.icon} w="100%" variant="subtle" size="xl">
+      {tab.name}
+    </Button>
+  ));
+
   return (
-    <div className={classes.header}>
-      <Container className={classes.mainSection}>
-        <Group position="apart">
-          <Flex align="center">
-            <IconBook size={30} color={theme.white} />
-            <Text ml="lg" color="white">
-              Librart
-            </Text>
-          </Flex>
-
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            className={classes.burger}
-            size="sm"
-            color={theme.white}
-          />
-
-          <Menu
-            width={260}
-            position="bottom-end"
-            transitionProps={{ transition: 'pop-top-right' }}
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
-            withinPortal
-          >
-            <Menu.Target>
-              <UnstyledButton
-                className={cx(classes.user, {
-                  [classes.userActive]: userMenuOpened,
-                })}
-              >
-                <Group spacing={7}>
-                  <Text
-                    weight={500}
-                    size="sm"
-                    sx={{ lineHeight: 1, color: theme.white }}
-                    mr={3}
-                  >
-                    {user?.email}
-                  </Text>
-                  <IconChevronDown size={rem(12)} stroke={1.5} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
-                Account settings
-              </Menu.Item>
-              <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>
-                Logout
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
-      </Container>
-      <Container>
-        <Tabs
-          defaultValue="Home"
-          variant="outline"
-          classNames={{
-            root: classes.tabs,
-            tabsList: classes.tabsList,
-            tab: classes.tab,
-          }}
+    <>
+      <Drawer opened={opened} onClose={close}>
+        <Drawer.Body
+          style={{ overflow: 'hidden', flexGrow: 1, height: '100%' }}
         >
-          <Tabs.List>{items}</Tabs.List>
-        </Tabs>
-      </Container>
-    </div>
+          <Flex direction="column" h="100%">
+            <Stack>{drawerItems}</Stack>
+            <Box style={{ height: rem(100) }} />
+            <Button
+              leftIcon={<IconLogout size={20} />}
+              w="100%"
+              variant="subtle"
+              size="xl"
+              onClick={logout}
+              color="red"
+            >
+              Logout
+            </Button>
+          </Flex>
+        </Drawer.Body>
+      </Drawer>
+      <div className={classes.header}>
+        <Container className={classes.mainSection}>
+          <Group position="apart">
+            <Flex align="center">
+              <IconBook size={30} color={theme.white} />
+              <Text ml="lg" color="white">
+                Librart
+              </Text>
+            </Flex>
+
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              className={classes.burger}
+              size="sm"
+              color={theme.white}
+            />
+
+            <Menu
+              width={260}
+              position="bottom-end"
+              transitionProps={{ transition: 'pop-top-right' }}
+              onClose={() => setUserMenuOpened(false)}
+              onOpen={() => setUserMenuOpened(true)}
+              withinPortal
+            >
+              <Menu.Target>
+                <UnstyledButton
+                  className={cx(classes.user, {
+                    [classes.userActive]: userMenuOpened,
+                  })}
+                >
+                  <Group spacing={7}>
+                    <Text
+                      weight={500}
+                      size="sm"
+                      sx={{ lineHeight: 1, color: theme.white }}
+                      mr={3}
+                    >
+                      {user?.email}
+                    </Text>
+                    <IconChevronDown size={rem(12)} stroke={1.5} />
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item
+                  icon={<IconLogout size="0.9rem" stroke={1.5} />}
+                  onClick={() => logout()}
+                >
+                  Logout
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+        </Container>
+        <Container>
+          <Tabs
+            defaultValue="Home"
+            variant="outline"
+            classNames={{
+              root: classes.tabs,
+              tabsList: classes.tabsList,
+              tab: classes.tab,
+            }}
+          >
+            <Tabs.List>{items}</Tabs.List>
+          </Tabs>
+        </Container>
+      </div>{' '}
+    </>
   );
 };
 
