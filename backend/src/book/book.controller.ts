@@ -90,6 +90,18 @@ export class BookController {
     return this.bookService.update(+id, updateBookDto);
   }
 
+  @Get('search/:search')
+  @ApiOperation({
+    summary: 'Searches for books matching the query',
+  })
+  @ApiOkResponse({
+    description: 'Books matching the query',
+    type: [Book],
+  })
+  search(@Param('search') query: string) {
+    return this.bookService.search(query);
+  }
+
   @Delete(':id')
   @ApiParam({
     name: 'id',

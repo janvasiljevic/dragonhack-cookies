@@ -4,7 +4,7 @@ import {
   OnModuleInit,
   Logger,
 } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -19,6 +19,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async onModuleInit() {
     await this.$connect();
+    // enable trigrams on postgresql
+    await this.$queryRaw(Prisma.sql`CREATE EXTENSION IF NOT EXISTS pg_trgm;`);
     this.logger.verbose('Connected to PostgresSQL');
   }
 
