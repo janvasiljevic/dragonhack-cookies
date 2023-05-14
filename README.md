@@ -15,3 +15,12 @@ yarn prisma db seed
 ```
 
 Open the apllication on `localhost:3000`.
+
+There are 4 default users:
+
+- `matej@piskotki.si`
+- `anja@piskotki.si`
+- `jan@piskotki.si`
+- `matjaz@piskotki.si`
+
+All of their passwords are very `secret`.
