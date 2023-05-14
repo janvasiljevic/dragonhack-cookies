@@ -54,6 +54,10 @@ export class RecomendationsService {
           in: books.matches.map((book) => book.id),
         },
       },
+      include: {
+        owner: true,
+        borrower: true,
+      },
     });
   }
 }

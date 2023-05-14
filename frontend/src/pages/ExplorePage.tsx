@@ -1,13 +1,19 @@
 import { useBookControllerSearch } from '@/api/book/book';
+import { useRecomendationsControllerGetRecomendations } from '@/api/recomendations/recomendations';
+import BookDisplay from '@/components/BoookDisplay';
 import {
   Box,
   Button,
+  Center,
   Container,
   Flex,
+  Loader,
+  ScrollArea,
   Stack,
   Text,
   TextInput,
   Title,
+  UnstyledButton,
   createStyles,
   rem,
 } from '@mantine/core';
@@ -32,6 +38,10 @@ const useStyles = createStyles((t) => ({
   textAuthor: {
     fontSize: rem(12),
   },
+  flexLibrary: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
 }));
 
 const ExplorePage = () => {
@@ -40,6 +50,9 @@ const ExplorePage = () => {
   const { data: searchData } = useBookControllerSearch(debounced);
   const { classes: c } = useStyles();
   const navigate = useNavigate();
+
+  const { data: reccomendationsData, isLoading } =
+    useRecomendationsControllerGetRecomendations();
 
   return (
     <Container w="100%">
@@ -107,6 +120,37 @@ const ExplorePage = () => {
               <Title order={2}>Reccomendations </Title>
               <Text>Based on your reading history</Text>
             </Flex>
+            <ScrollArea pt="lg" className={c.flexLibrary}>
+              <Flex gap="md">
+                {isLoading && (
+                  <Center w="100%">
+                    {' '}
+                    <Loader />{' '}
+                  </Center>
+                )}
+                <AnimatePresence>
+                  {reccomendationsData?.map((book) => (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <UnstyledButton
+                        key={book.id}
+                        onClick={() => navigate(`/book/${book.id}`)}
+                        style={{
+                          height: rem(300),
+                          width: rem(180),
+                          flexShrink: 0,
+                        }}
+                      >
+                        <BookDisplay book={book} />
+                      </UnstyledButton>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </Flex>
+            </ScrollArea>
           </motion.div>
         )}
       </AnimatePresence>
