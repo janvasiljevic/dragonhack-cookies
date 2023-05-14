@@ -27,10 +27,13 @@ export class User {
   lastName: string = 'Priimek';
 
   @ApiProperty({ type: Number })
-  numberOfBooksBorrowed: number;
+  numberOfBooksRead: number;
 
   @ApiProperty({ isArray: true, type: () => Book })
   ownedBooks: Book[];
+
+  @ApiProperty({ isArray: true, type: () => Book })
+  likedBooks: Book[];
 
   @ApiProperty({ isArray: true, type: () => Book })
   borrowedBooks: Book[];

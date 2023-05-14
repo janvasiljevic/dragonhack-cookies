@@ -54,4 +54,7 @@ export class Book {
 
   @ApiPropertyOptional({ type: Date })
   returnDate?: Date;
+
+  @ApiProperty({ isArray: true, type: () => User })
+  likedBy: User[];
 }
