@@ -10,6 +10,7 @@ import { AxiosError } from 'axios';
 import '@fontsource/abril-fatface';
 import '@fontsource/anonymous-pro';
 import '@fontsource/source-sans-pro';
+import AddBook from './modals/AddBook';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,7 +34,9 @@ const queryClient = new QueryClient({
   },
 });
 
-const modals = {};
+const modals = {
+  addBook: AddBook,
+};
 
 function App() {
   return (

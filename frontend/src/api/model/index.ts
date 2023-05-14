@@ -1,6 +1,7 @@
 export * from './achievement';
 export * from './authControllerRegister201';
 export * from './book';
+export * from './bookControllerLike200';
 export * from './bookReservation';
 export * from './bookStatus';
 export * from './createBookISBNDto';

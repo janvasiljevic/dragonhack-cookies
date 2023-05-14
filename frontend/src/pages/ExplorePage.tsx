@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconBook2 } from '@tabler/icons-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m, motion } from 'framer-motion';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,12 +43,28 @@ const ExplorePage = () => {
 
   return (
     <Container w="100%">
+      <AnimatePresence>
+        {search === '' && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
+            <Title order={2}> Find your next book</Title>
+            <Text> Find books others have and are willing to share </Text>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <TextInput
-        label="Search"
-        placeholder="Search for a book"
+        placeholder={
+          ['To kill a mockingbird', 'The Great Gatsby', 'Hobbit'][
+            Math.floor(Math.random() * 3)
+          ]
+        }
         onChange={(e) => setSearch(e.currentTarget.value)}
         value={search}
         size="lg"
+        icon={<IconBook2 />}
         pb="xl"
       />
       <AnimatePresence>
@@ -80,6 +96,7 @@ const ExplorePage = () => {
         </Stack>
       </AnimatePresence>
       <AnimatePresence>
+        {' '}
         {search === '' && (
           <motion.div
             initial={{ opacity: 0 }}

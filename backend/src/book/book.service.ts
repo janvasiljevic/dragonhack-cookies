@@ -124,6 +124,10 @@ export class BookService {
       where: {
         id,
       },
+      include: {
+        owner: true,
+        borrower: true,
+      },
     });
 
     if (!book) throw new NotFoundException('Knjiga ne obstaja');

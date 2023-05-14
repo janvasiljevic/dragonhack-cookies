@@ -1,4 +1,8 @@
-import { useAuthControllerLogin } from '@/api/auth/auth';
+import {
+  useAuthControllerLogin,
+  useAuthControllerRegister,
+} from '@/api/auth/auth';
+import background from '@/assets/login.jpg';
 import {
   Box,
   Button,
@@ -8,19 +12,25 @@ import {
   Title,
   createStyles,
   rem,
-  Text,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconLock,
+  IconMail,
+  IconPencil,
+} from '@tabler/icons-react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import background from '@/assets/login.jpg';
-import { IconLock, IconMail } from '@tabler/icons-react';
-import { motion } from 'framer-motion';
 
 const loginSchema = z.object({
   email: z.string(),
   password: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
 });
 
 type FormValues = z.infer<typeof loginSchema>;
@@ -56,14 +66,13 @@ const useStyles = createStyles((t) => ({
 }));
 
 const RegisterPage = () => {
-  const RegisterPage = useNavigate();
   const { classes: c } = useStyles();
   const navigate = useNavigate();
 
-  const login = useAuthControllerLogin({
+  const login = useAuthControllerRegister({
     mutation: {
       onSuccess: () => {
-        navigate('/timeline');
+        navigate('/');
       },
       onError: (error) => {
         showNotification({
@@ -80,6 +89,8 @@ const RegisterPage = () => {
     initialValues: {
       email: '',
       password: '',
+      firstName: '',
+      lastName: '',
     } as FormValues,
   });
 
@@ -113,6 +124,19 @@ const RegisterPage = () => {
         </Title>
         <form onSubmit={form.onSubmit(onSubmit)}>
           <TextInput
+            placeholder="John"
+            label="First name"
+            icon={<IconPencil />}
+            {...form.getInputProps('firstName')}
+          />
+
+          <TextInput
+            placeholder="Doe"
+            label="Last name"
+            icon={<IconPencil />}
+            {...form.getInputProps('lastName')}
+          />
+          <TextInput
             placeholder="your@email.com"
             label="Email"
             icon={<IconMail />}
@@ -128,9 +152,15 @@ const RegisterPage = () => {
           />
 
           <Group position="apart" mt="md">
-            <Button variant="subtle">Register</Button>
+            <Button
+              onClick={() => navigate('/')}
+              variant="subtle"
+              leftIcon={<IconChevronLeft />}
+            >
+              Back
+            </Button>
             <Button type="submit" variant="outline">
-              Login
+              Register
             </Button>
           </Group>
         </form>

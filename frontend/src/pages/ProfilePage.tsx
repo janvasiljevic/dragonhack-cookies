@@ -1,8 +1,10 @@
+import { useBorrowControllerGetOwnerReservations } from '@/api/borrow/borrow';
 import { useUserControllerFindOne } from '@/api/user/user';
 import BookDisplay from '@/components/BoookDisplay';
 import { ProfileParams } from '@/router';
 import { useAppStore } from '@/store';
 import {
+  Blockquote,
   Box,
   Button,
   Card,
@@ -18,10 +20,13 @@ import {
   createStyles,
   rem,
 } from '@mantine/core';
+import { openContextModal } from '@mantine/modals';
 import {
   IconBook,
+  IconBook2,
   IconGitBranch,
   IconGitCommit,
+  IconHeart,
   IconPlus,
 } from '@tabler/icons-react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
@@ -56,6 +61,30 @@ const useStyles = createStyles((t) => ({
   flexLibrary: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  t1: {
+    fontSize: rem(20),
+    color: t.fn.primaryColor(),
+  },
+  t2: {
+    color: t.fn.dimmed(),
+  },
+  t3: {
+    color: t.fn.dimmed(),
+  },
+  bookSlim: {
+    padding: t.spacing.md,
+    borderBottom: `1px solid ${t.colors.gray[4]}`,
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  textBookTitle: {
+    fontSize: rem(20),
+    fontFamily: t.fontFamilyMonospace,
+  },
+  textAuthor: {
+    fontSize: rem(12),
   },
 }));
 
@@ -92,6 +121,18 @@ const ProfilePage = () => {
     {
       query: {
         enabled: !!userId,
+        queryKey: ['user'],
+      },
+    },
+  );
+
+  const isCurrentUser = user && user.id === userId;
+
+  const { data: resData } = useBorrowControllerGetOwnerReservations(
+    userId || '',
+    {
+      query: {
+        enabled: !!isCurrentUser,
       },
     },
   );
@@ -116,22 +157,34 @@ const ProfilePage = () => {
           </Grid.Col>
           <Grid.Col sm={4}>
             <StatBlock
-              title="Books owned"
-              value={userProfileData.ownedBooks.length + ''}
-              icon={<IconBook />}
+              title="Books read"
+              value={userProfileData.numberOfBooksRead + ''}
+              icon={<IconBook2 />}
             />
           </Grid.Col>
           <Grid.Col sm={4}>
             <StatBlock
-              title="Books owned"
-              value={userProfileData.ownedBooks.length + ''}
-              icon={<IconBook />}
+              title="Liked books"
+              value={userProfileData.likedBooks.length + ''}
+              icon={<IconHeart />}
             />
           </Grid.Col>
         </Grid>
         <Title order={1} className={c.sectionTitles}>
           Library
         </Title>
+        {userProfileData.ownedBooks.length === 0 && (
+          <Flex justify="center" align="center" pt="lg" direction="column">
+            <Text className={c.t1}>
+              You don't have any books in your library yet.
+            </Text>
+            <Text className={c.t2}> Start building your own library </Text>
+            <Text className={c.t3}> ... or go to the explore page!</Text>
+            <Blockquote cite="- J. R. R. Tolkien">
+              Little By Little, One Travels Far
+            </Blockquote>
+          </Flex>
+        )}
         <ScrollArea pt="lg" className={c.flexLibrary}>
           <Flex gap="md">
             {userProfileData.ownedBooks.map((book) => (
@@ -146,38 +199,46 @@ const ProfilePage = () => {
         </ScrollArea>
         {user?.id === userProfileData.id && (
           <Group pt="lg" w="100%" position="right">
-            <Button leftIcon={<IconPlus />} variant="outline">
+            <Button
+              onClick={() =>
+                openContextModal({
+                  modal: 'addBook',
+                  title: 'Add a book to your library',
+                  innerProps: {},
+                })
+              }
+              leftIcon={<IconPlus />}
+              variant="outline"
+            >
               Add book
             </Button>
           </Group>
         )}
+        {isCurrentUser && resData?.length !== 0 && (
+          <>
+            <Title order={1} className={c.sectionTitles}>
+              Reservations
+            </Title>
+            <Text> The following books have reservation requests</Text>
+            {resData?.map((r) => (
+              <Flex className={c.bookSlim}>
+                <Flex direction={'column'}>
+                  <Text className={c.textBookTitle}>{r.book.title}</Text>
+                  <Text className={c.textAuthor}>{r.book.author}</Text>
+                </Flex>
+                <Box sx={{ flexGrow: 1 }} />
+                <Button
+                  variant="outline"
+                  leftIcon={<IconBook2 />}
+                  onClick={() => navigate(`/book/${r.book.id}`)}
+                >
+                  View
+                </Button>
+              </Flex>
+            ))}
+          </>
+        )}
       </Flex>
-      <Timeline bulletSize={24} lineWidth={2}>
-        <Timeline.Item bullet={<IconGitBranch size={12} />} title="New branch">
-          <Text color="dimmed" size="sm">
-            You&apos;ve created new branch{' '}
-            <Text variant="link" component="span" inherit>
-              fix-notifications
-            </Text>
-            from master
-          </Text>
-          <Text size="xs" mt={4}>
-            2 hours ago
-          </Text>
-        </Timeline.Item>
-
-        <Timeline.Item bullet={<IconGitCommit size={12} />} title="Commits">
-          <Text color="dimmed" size="sm">
-            You&apos;ve pushed 23 commits to
-            <Text variant="link" component="span" inherit>
-              fix-notifications branch
-            </Text>
-          </Text>
-          <Text size="xs" mt={4}>
-            52 minutes ago
-          </Text>
-        </Timeline.Item>
-      </Timeline>
     </Container>
   );
 };

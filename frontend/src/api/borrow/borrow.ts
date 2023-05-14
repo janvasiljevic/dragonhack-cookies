@@ -265,7 +265,7 @@ export const borrowControllerReturnBook = (
     /**
  * @summary Cancel reservation
  */
-export const borrowControllerCancleReservation = (
+export const borrowControllerCancelReservation = (
     reservationId: string,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<void>(
@@ -276,25 +276,25 @@ export const borrowControllerCancleReservation = (
   
 
 
-    export type BorrowControllerCancleReservationMutationResult = NonNullable<Awaited<ReturnType<typeof borrowControllerCancleReservation>>>
+    export type BorrowControllerCancelReservationMutationResult = NonNullable<Awaited<ReturnType<typeof borrowControllerCancelReservation>>>
     
-    export type BorrowControllerCancleReservationMutationError = ErrorType<unknown>
+    export type BorrowControllerCancelReservationMutationError = ErrorType<unknown>
 
-    export const useBorrowControllerCancleReservation = <TError = ErrorType<unknown>,
+    export const useBorrowControllerCancelReservation = <TError = ErrorType<unknown>,
     
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof borrowControllerCancleReservation>>, TError,{reservationId: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof borrowControllerCancelReservation>>, TError,{reservationId: string}, TContext>, request?: SecondParameter<typeof customInstance>}
 ) => {
       const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof borrowControllerCancleReservation>>, {reservationId: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof borrowControllerCancelReservation>>, {reservationId: string}> = (props) => {
           const {reservationId} = props ?? {};
 
-          return  borrowControllerCancleReservation(reservationId,requestOptions)
+          return  borrowControllerCancelReservation(reservationId,requestOptions)
         }
 
-      return useMutation<Awaited<ReturnType<typeof borrowControllerCancleReservation>>, TError, {reservationId: string}, TContext>(mutationFn, mutationOptions)
+      return useMutation<Awaited<ReturnType<typeof borrowControllerCancelReservation>>, TError, {reservationId: string}, TContext>(mutationFn, mutationOptions)
     }
     

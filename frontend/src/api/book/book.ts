@@ -20,7 +20,7 @@ import type {
 import type {
   Book,
   CreateBookISBNDto,
-  UpdateBookDto
+  BookControllerLike200
 } from '.././model'
 import { customInstance } from '.././mutator/custom-instance'
 import type { ErrorType } from '.././mutator/custom-instance'
@@ -156,44 +156,6 @@ export const useBookControllerFindOne = <TData = Awaited<ReturnType<typeof bookC
 }
 
 /**
- * @summary Not implemented
- */
-export const bookControllerUpdate = (
-    id: string,
-    updateBookDto: UpdateBookDto,
- options?: SecondParameter<typeof customInstance>,) => {
-      return customInstance<string>(
-      {url: `/api/book/${id}`, method: 'patch',
-      headers: {'Content-Type': 'application/json', },
-      data: updateBookDto
-    },
-      options);
-    }
-  
-
-
-    export type BookControllerUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof bookControllerUpdate>>>
-    export type BookControllerUpdateMutationBody = UpdateBookDto
-    export type BookControllerUpdateMutationError = ErrorType<unknown>
-
-    export const useBookControllerUpdate = <TError = ErrorType<unknown>,
-    
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookControllerUpdate>>, TError,{id: string;data: UpdateBookDto}, TContext>, request?: SecondParameter<typeof customInstance>}
-) => {
-      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bookControllerUpdate>>, {id: string;data: UpdateBookDto}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  bookControllerUpdate(id,data,requestOptions)
-        }
-
-      return useMutation<Awaited<ReturnType<typeof bookControllerUpdate>>, TError, {id: string;data: UpdateBookDto}, TContext>(mutationFn, mutationOptions)
-    }
-    /**
  * @summary Deletes the book with ID
  */
 export const bookControllerRemove = (
@@ -227,6 +189,42 @@ export const bookControllerRemove = (
         }
 
       return useMutation<Awaited<ReturnType<typeof bookControllerRemove>>, TError, {id: string}, TContext>(mutationFn, mutationOptions)
+    }
+    /**
+ * @summary Like or unlike the book with ID
+ */
+export const bookControllerLike = (
+    bookId: string,
+    liked: boolean,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<BookControllerLike200>(
+      {url: `/api/book/like/${bookId}/${liked}`, method: 'patch'
+    },
+      options);
+    }
+  
+
+
+    export type BookControllerLikeMutationResult = NonNullable<Awaited<ReturnType<typeof bookControllerLike>>>
+    
+    export type BookControllerLikeMutationError = ErrorType<unknown>
+
+    export const useBookControllerLike = <TError = ErrorType<unknown>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookControllerLike>>, TError,{bookId: string;liked: boolean}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bookControllerLike>>, {bookId: string;liked: boolean}> = (props) => {
+          const {bookId,liked} = props ?? {};
+
+          return  bookControllerLike(bookId,liked,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof bookControllerLike>>, TError, {bookId: string;liked: boolean}, TContext>(mutationFn, mutationOptions)
     }
     /**
  * @summary Searches for books matching the query

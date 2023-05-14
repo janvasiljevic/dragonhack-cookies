@@ -1,9 +1,10 @@
 import { useBookControllerFindOne } from '@/api/book/book';
 import {
   useBorrowControllerAcceptReservation,
-  useBorrowControllerCancleReservation,
+  useBorrowControllerCancelReservation,
   useBorrowControllerGetBookReservations,
   useBorrowControllerReserve,
+  useBorrowControllerReturnBook,
 } from '@/api/borrow/borrow';
 import BookDisplay from '@/components/BoookDisplay';
 import { BookParams } from '@/router';
@@ -13,6 +14,7 @@ import {
   Button,
   Container,
   createStyles,
+  Divider,
   Flex,
   Group,
   rem,
@@ -21,7 +23,15 @@ import {
   Title,
   UnstyledButton,
 } from '@mantine/core';
-import { IconBook2, IconX } from '@tabler/icons-react';
+import {
+  IconBook2,
+  IconExclamationCircle,
+  IconHandClick,
+  IconHandGrab,
+  IconUser,
+  IconX,
+} from '@tabler/icons-react';
+import { parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -80,8 +90,8 @@ const BookPage = () => {
   // Mutations
   const { mutateAsync: reserveBook } = useBorrowControllerReserve();
   const { mutateAsync: cancelReservation } =
-    useBorrowControllerCancleReservation();
-
+    useBorrowControllerCancelReservation();
+  const { mutateAsync: returnBook } = useBorrowControllerReturnBook();
   const { mutateAsync: acceptReservation } =
     useBorrowControllerAcceptReservation();
 
@@ -101,6 +111,11 @@ const BookPage = () => {
     await refetchReservationData();
   };
 
+  const returnBookClick = async (bookId: string) => {
+    await returnBook({ bookId: bookId });
+    await refetchReservationData();
+  };
+
   const cancelOwnReservationClick = async () => {
     // Find the reservation id of the user
     const reservationId = reservationData?.find(
@@ -117,6 +132,8 @@ const BookPage = () => {
 
   // Check if the user is the owner of the book
   const isBookOwner = user?.id === bookData?.ownerId;
+
+  const youHaveBookInPossesion = bookData?.borrowerId === user?.id;
 
   // Check if the user has already reserved the book
   const youHaveReservedThisBook = reservationData?.some(
@@ -138,8 +155,24 @@ const BookPage = () => {
             <Text className={c.title}> {bookData.title}</Text>
             <Text className={c.author}> {bookData.author}</Text>
             <Text className={c.desc}>{bookData.description}</Text>
+            {!isBookOwner && (
+              <Stack pt="lg">
+                <Flex align="center">
+                  <Text c="dimmed">This book belongs to</Text>
+
+                  <Button
+                    onClick={() => navigate(`/profile/${bookData.ownerId}`)}
+                    variant="subtle"
+                    leftIcon={<IconUser />}
+                  >
+                    {bookData.owner.firstName} {bookData.owner.lastName}
+                  </Button>
+                </Flex>
+              </Stack>
+            )}
           </Flex>
         </Flex>
+        <Divider my="lg" />
 
         {isBookOwner && reservationData && bookData.status === 'AVAILABLE' && (
           <Stack spacing="xs" mt={20}>
@@ -178,13 +211,43 @@ const BookPage = () => {
           </Stack>
         )}
 
-        {isBookOwner && reservationData && bookData.status !== 'AVAILABLE' && (
-          <Stack spacing="xs" mt={20}>
-            <Title order={1} className={c.sectionTitles}>
-              Status
-            </Title>
-            <Text> {bookData.status} </Text>
-          </Stack>
+        {isBookOwner && bookData && bookData.borrower && (
+          <>
+            <Flex mt={20} align="center">
+              <Text>Borrowed by</Text>
+              <Button
+                variant="subtle"
+                leftIcon={<IconUser />}
+                onClick={() => navigate(`/profile/${bookData.borrowerId}`)}
+              >
+                <Text style={{ textDecoration: 'underline' }}>
+                  {bookData.borrower.firstName} {bookData.borrower.lastName}
+                </Text>
+              </Button>
+              <Text>
+                until {parseISO(bookData.returnDate || '').toLocaleDateString()}
+              </Text>
+            </Flex>
+            <Text c="dimmed" mt="md">
+              When the other user returns the book to you, please confirm it{' '}
+            </Text>
+            <Group position="apart" mt="sm">
+              <Button
+                onClick={() => returnBookClick(bookData.id)}
+                leftIcon={<IconHandGrab />}
+                variant="subtle"
+              >
+                The book was already returned
+              </Button>
+              <Button
+                leftIcon={<IconExclamationCircle />}
+                variant="subtle"
+                color="red"
+              >
+                File a despute
+              </Button>
+            </Group>
+          </>
         )}
 
         {!isBookOwner &&
@@ -224,6 +287,19 @@ const BookPage = () => {
             <Button variant="outline" leftIcon={<IconBook2 />} disabled>
               Request book
             </Button>
+          </Group>
+        )}
+
+        {youHaveBookInPossesion && (
+          <Group spacing="xs" mt={20} w="100%">
+            <IconBook2 />
+            <Text c="dimmed"> You have this book in your possesion </Text>
+            <Text c="pink">
+              {' '}
+              You have till{' '}
+              {parseISO(bookData.returnDate || '').toLocaleDateString()} to
+              return it
+            </Text>
           </Group>
         )}
       </motion.div>

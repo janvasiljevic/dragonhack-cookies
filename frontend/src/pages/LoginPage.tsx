@@ -1,4 +1,5 @@
 import { useAuthControllerLogin } from '@/api/auth/auth';
+import background from '@/assets/login.jpg';
 import {
   Box,
   Button,
@@ -8,15 +9,13 @@ import {
   Title,
   createStyles,
   rem,
-  Text,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
-import { useNavigate } from 'react-router-dom';
-import { z } from 'zod';
-import background from '@/assets/login.jpg';
 import { IconLock, IconMail } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
 
 const loginSchema = z.object({
   email: z.string(),
@@ -62,7 +61,7 @@ const LoginPage = () => {
   const login = useAuthControllerLogin({
     mutation: {
       onSuccess: () => {
-        navigate('/timeline');
+        navigate('/explore');
       },
       onError: (error) => {
         showNotification({
@@ -127,7 +126,9 @@ const LoginPage = () => {
           />
 
           <Group position="apart" mt="md">
-            <Button variant="subtle">Register</Button>
+            <Button variant="subtle" onClick={() => navigate('/register')}>
+              Register
+            </Button>
             <Button type="submit" variant="outline">
               Login
             </Button>

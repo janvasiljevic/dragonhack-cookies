@@ -20,6 +20,7 @@ export interface User {
   lastName: string;
   numberOfBooksRead: number;
   ownedBooks: Book[];
+  likedBooks: Book[];
   borrowedBooks: Book[];
   friendsTo: User[];
   friendsFrom: User[];
