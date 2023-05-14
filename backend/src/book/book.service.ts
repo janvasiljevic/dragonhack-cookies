@@ -127,6 +127,7 @@ export class BookService {
       include: {
         owner: true,
         borrower: true,
+        likedBy: true,
       },
     });
 

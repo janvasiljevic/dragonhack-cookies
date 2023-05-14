@@ -1,4 +1,7 @@
-import { useBookControllerFindOne } from '@/api/book/book';
+import {
+  useBookControllerFindOne,
+  useBookControllerLike,
+} from '@/api/book/book';
 import {
   useBorrowControllerAcceptReservation,
   useBorrowControllerCancelReservation,
@@ -23,11 +26,13 @@ import {
   Title,
   UnstyledButton,
 } from '@mantine/core';
+import { IconCheck } from '@tabler/icons-react';
 import {
   IconBook2,
   IconExclamationCircle,
   IconHandClick,
   IconHandGrab,
+  IconHeart,
   IconUser,
   IconX,
 } from '@tabler/icons-react';
@@ -77,9 +82,12 @@ const BookPage = () => {
   const navigate = useNavigate();
 
   // Fetch book data
-  const { data: bookData } = useBookControllerFindOne(bookId || '', {
-    query: { enabled: !!bookId },
-  });
+  const { data: bookData, refetch: refetchBookData } = useBookControllerFindOne(
+    bookId || '',
+    {
+      query: { enabled: !!bookId },
+    },
+  );
 
   // Fetch reservation data about the book
   const { data: reservationData, refetch: refetchReservationData } =
@@ -95,20 +103,29 @@ const BookPage = () => {
   const { mutateAsync: acceptReservation } =
     useBorrowControllerAcceptReservation();
 
+  const { mutateAsync: likeBook } = useBookControllerLike();
+
   // Handlers
   const reserveBookClick = async (bookId: string) => {
     await reserveBook({ bookId });
     await refetchReservationData();
   };
 
+  const likeButton = async (bookId: string, liked: boolean) => {
+    await likeBook({ bookId, liked });
+    await refetchBookData();
+  };
+
   const cancelReservationClick = async (reservationId: string) => {
     await cancelReservation({ reservationId });
     await refetchReservationData();
+    await refetchBookData();
   };
 
   const acceptReservationClick = async (reservationId: string) => {
     await acceptReservation({ reservationId });
     await refetchReservationData();
+    await refetchBookData();
   };
 
   const returnBookClick = async (bookId: string) => {
@@ -132,8 +149,10 @@ const BookPage = () => {
 
   // Check if the user is the owner of the book
   const isBookOwner = user?.id === bookData?.ownerId;
-
   const youHaveBookInPossesion = bookData?.borrowerId === user?.id;
+  const youLikeTheBook = bookData?.likedBy?.some(
+    (like) => like.id === user?.id,
+  );
 
   // Check if the user has already reserved the book
   const youHaveReservedThisBook = reservationData?.some(
@@ -172,6 +191,22 @@ const BookPage = () => {
             )}
           </Flex>
         </Flex>
+        <Group mt="lg">
+          <Button
+            variant="light"
+            leftIcon={<IconHeart />}
+            onClick={() => likeButton(bookData?.id, !youLikeTheBook)}
+          >
+            Like book
+            <span style={{ marginLeft: rem(10), opacity: 0.8 }}>
+              {bookData.likedBy.length}
+            </span>
+          </Button>
+          <Text c="dimmed">
+            Let the community know you enjoyed the book and received
+            personalized reccomendations!
+          </Text>
+        </Group>
         <Divider my="lg" />
 
         {isBookOwner && reservationData && bookData.status === 'AVAILABLE' && (
@@ -193,7 +228,7 @@ const BookPage = () => {
                     onClick={() => acceptReservationClick(r.id)}
                     variant="light"
                     color="teal"
-                    leftIcon={<IconX />}
+                    leftIcon={<IconCheck />}
                   >
                     Accept
                   </Button>

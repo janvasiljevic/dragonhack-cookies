@@ -86,7 +86,11 @@ export class BookController {
   @ApiOperation({
     summary: 'Like or unlike the book with ID',
   })
-  like(@CurrentUser() { userId }: ExtractedUAT, @Param('bookId') bookId: string, @Param('liked') liked: boolean) {
+  like(
+    @CurrentUser() { userId }: ExtractedUAT,
+    @Param('bookId') bookId: string,
+    @Param('liked') liked: boolean,
+  ) {
     return this.bookService.like(userId, bookId, liked);
   }
 

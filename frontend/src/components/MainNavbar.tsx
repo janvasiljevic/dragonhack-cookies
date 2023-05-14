@@ -161,7 +161,13 @@ const MainNavbar = () => {
   ));
 
   const drawerItems = tabs.map((tab) => (
-    <Button leftIcon={tab.icon} w="100%" variant="subtle" size="xl">
+    <Button
+      key={tab.icon}
+      leftIcon={tab.icon}
+      w="100%"
+      variant="subtle"
+      size="xl"
+    >
       {tab.name}
     </Button>
   ));
