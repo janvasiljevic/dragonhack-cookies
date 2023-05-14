@@ -116,7 +116,22 @@ async function createReservation(bookId: string, userId: string) {
   });
 }
 
-async function generateBookReservations() {
+async function createLikedBook(bookId: string, userId: string) {
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      likedBooks: {
+        connect: {
+          id: bookId,
+        },
+      },
+    },
+  });
+}
+
+async function generateBookReservationsAndLikes() {
   const books = await prisma.book.findMany();
   const users = await prisma.user.findMany();
 
@@ -125,8 +140,8 @@ async function generateBookReservations() {
       const otherUsers = users.filter((user) => user.id !== book.ownerId);
 
       return otherUsers.map(async (user) => {
-        if (Math.random() < 0.9) return;
-        return await createReservation(book.id, user.id);
+        if (Math.random() < 0.01) return await createLikedBook(book.id, user.id);
+        if (Math.random() < 0.1) return await createReservation(book.id, user.id);
       });
     }),
   );
@@ -138,7 +153,7 @@ async function main() {
   await deleteAll();
   await genereateUsers();
   await generateBooks();
-  await generateBookReservations();
+  await generateBookReservationsAndLikes();
 }
 
 main()

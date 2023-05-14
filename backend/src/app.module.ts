@@ -7,9 +7,10 @@ import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 import { BookModule } from './book/book.module';
 import { BorrowModule } from './borrow/borrow.module';
 import { FriendsModule } from './friends/friends.module';
+import { RecomendationsModule } from './recomendations/recomendations.module';
 
 @Module({
-  imports: [UserModule, AuthModule, PrismaModule, BookModule, BorrowModule, FriendsModule],
+  imports: [UserModule, AuthModule, PrismaModule, BookModule, BorrowModule, FriendsModule, RecomendationsModule],
   controllers: [],
   providers: [
     {
