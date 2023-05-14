@@ -4,15 +4,17 @@ import {
   Button,
   Container,
   Flex,
-  LoadingOverlay,
+  Group,
   Stack,
   Text,
   TextInput,
+  Title,
   createStyles,
   rem,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconBook2 } from '@tabler/icons-react';
+import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,7 +36,7 @@ const useStyles = createStyles((t) => ({
 }));
 
 const ExplorePage = () => {
-  const [search, setSearch] = React.useState('harr');
+  const [search, setSearch] = React.useState('');
   const [debounced] = useDebouncedValue(search, 200);
   const { data: searchData } = useBookControllerSearch(debounced);
   const { classes: c } = useStyles();
@@ -44,28 +46,54 @@ const ExplorePage = () => {
     <Container w="100%">
       <TextInput
         label="Search"
+        placeholder="Search for a book"
         onChange={(e) => setSearch(e.currentTarget.value)}
         value={search}
+        size="lg"
         pb="xl"
       />
-      <Stack w="100%" spacing="xl">
-        {searchData?.map((book) => (
-          <Flex key={book.id} className={c.bookSlim}>
-            <Flex direction={'column'}>
-              <Text className={c.textBookTitle}>{book.title}</Text>
-              <Text className={c.textAuthor}>{book.author}</Text>
+      <AnimatePresence>
+        <Stack w="100%" spacing="xl">
+          {search !== '' &&
+            searchData?.map((book) => (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                key={book.id}
+              >
+                <Flex className={c.bookSlim}>
+                  <Flex direction={'column'}>
+                    <Text className={c.textBookTitle}>{book.title}</Text>
+                    <Text className={c.textAuthor}>{book.author}</Text>
+                  </Flex>
+                  <Box sx={{ flexGrow: 1 }} />
+                  <Button
+                    variant="outline"
+                    leftIcon={<IconBook2 />}
+                    onClick={() => navigate(`/book/${book.id}`)}
+                  >
+                    Book
+                  </Button>
+                </Flex>
+              </motion.div>
+            ))}
+        </Stack>
+      </AnimatePresence>
+      <AnimatePresence>
+        {search === '' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Flex direction="column">
+              <Title order={2}>Reccomendations </Title>
+              <Text>Based on your reading history</Text>
             </Flex>
-            <Box sx={{ flexGrow: 1 }} />
-            <Button
-              variant="outline"
-              leftIcon={<IconBook2 />}
-              onClick={() => navigate(`/book/${book.id}`)}
-            >
-              Book
-            </Button>
-          </Flex>
-        ))}
-      </Stack>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Container>
   );
 };

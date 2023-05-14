@@ -10,6 +10,7 @@ import {
   rem,
   Text,
 } from '@mantine/core';
+import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 
 const useStyles = createStyles((t) => ({
@@ -55,15 +56,17 @@ const BookPage = () => {
 
   return (
     <Container size="md" w={'100%'}>
-      <Flex className={c.flex}>
-        <Box style={{ width: rem(300), height: rem(420) }}>
-          <BookDisplay book={data} />
-        </Box>
-        <Flex direction="column" className={c.flex2}>
-          <Text className={c.title}> {data.title}</Text>
-          <Text className={c.author}> {data.author}</Text>
+      <motion.div animate={{ opacity: 1 }} initial={{ opacity: 0 }}>
+        <Flex className={c.flex}>
+          <Box style={{ width: rem(300), height: rem(420) }}>
+            <BookDisplay book={data} />
+          </Box>
+          <Flex direction="column" className={c.flex2}>
+            <Text className={c.title}> {data.title}</Text>
+            <Text className={c.author}> {data.author}</Text>
+          </Flex>
         </Flex>
-      </Flex>
+      </motion.div>
     </Container>
   );
 };
