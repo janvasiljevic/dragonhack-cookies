@@ -214,6 +214,30 @@ const ProfilePage = () => {
             </Button>
           </Group>
         )}
+        {userProfileData.borrowedBooks?.length !== 0 && (
+          <>
+            <Title order={1} className={c.sectionTitles}>
+              Borrowed books
+            </Title>
+            <Text>The books this user has borrowed</Text>
+            {userProfileData.borrowedBooks?.map((r) => (
+              <Flex className={c.bookSlim}>
+                <Flex direction={'column'}>
+                  <Text className={c.textBookTitle}>{r.title}</Text>
+                  <Text className={c.textAuthor}>{r.author}</Text>
+                </Flex>
+                <Box sx={{ flexGrow: 1 }} />
+                <Button
+                  variant="outline"
+                  leftIcon={<IconBook2 />}
+                  onClick={() => navigate(`/book/${r.id}`)}
+                >
+                  View
+                </Button>
+              </Flex>
+            ))}
+          </>
+        )}
         {isCurrentUser && resData?.length !== 0 && (
           <>
             <Title order={1} className={c.sectionTitles}>
