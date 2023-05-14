@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export interface IUATPayload {
   email: string;
   sub: string;
