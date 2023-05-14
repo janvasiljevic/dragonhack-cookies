@@ -4,7 +4,6 @@ import {
   Button,
   Container,
   Flex,
-  Group,
   Stack,
   Text,
   TextInput,
@@ -14,7 +13,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconBook2 } from '@tabler/icons-react';
-import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 

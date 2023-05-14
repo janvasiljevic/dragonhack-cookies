@@ -98,7 +98,9 @@ const ProfilePage = () => {
   return (
     <Container size="md" w={'100%'}>
       <Flex direction="column">
-        <Text className={c.username}> {userProfileData.email} </Text>
+        <Text className={c.username}>
+          {userProfileData.firstName} {userProfileData.lastName}{' '}
+        </Text>
         <Grid mt="lg">
           <Grid.Col sm={4}>
             <StatBlock

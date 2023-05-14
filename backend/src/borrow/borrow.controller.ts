@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { BorrowService } from './borrow.service';
 import { CreateBorrowDto } from './dto/create-borrow.dto';
@@ -122,7 +123,7 @@ export class BorrowController {
     return this.borrowService.getUserReservations(userId);
   }
 
-  @Get('reservations/accept/:reservationId')
+  @Put('reservations/accept/:reservationId')
   @ApiParam({
     name: 'reservationId',
     type: String,
@@ -151,7 +152,7 @@ export class BorrowController {
     return this.borrowService.acceptReservation(userId, id);
   }
 
-  @Get('reservations/return/:bookId')
+  @Put('reservations/return/:bookId')
   @ApiParam({
     name: 'bookId',
     type: String,

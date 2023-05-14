@@ -4,8 +4,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateBorrowDto } from './dto/create-borrow.dto';
-import { UpdateBorrowDto } from './dto/update-borrow.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -51,6 +49,7 @@ export class BorrowService {
             status: true,
           },
         },
+        user: true,
       },
     });
   }
@@ -68,6 +67,7 @@ export class BorrowService {
             status: true,
           },
         },
+        user: true,
       },
     });
   }
@@ -83,6 +83,7 @@ export class BorrowService {
             status: true,
           },
         },
+        user: true,
       },
     });
   }
