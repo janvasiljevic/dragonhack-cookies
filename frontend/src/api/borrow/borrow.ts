@@ -18,7 +18,8 @@ import type {
   QueryKey
 } from '@tanstack/react-query'
 import type {
-  BookReservation
+  BookReservation,
+  Book
 } from '.././model'
 import { customInstance } from '.././mutator/custom-instance'
 import type { ErrorType } from '.././mutator/custom-instance'
@@ -72,7 +73,7 @@ export const borrowControllerReserve = (
       return useMutation<Awaited<ReturnType<typeof borrowControllerReserve>>, TError, {bookId: string}, TContext>(mutationFn, mutationOptions)
     }
     /**
- * @summary Returns all userIds that reserved this book
+ * @summary Returns all reservations including the book and book availability
  */
 export const borrowControllerGetBookReservations = (
     bookId: string,
@@ -112,7 +113,47 @@ export const useBorrowControllerGetBookReservations = <TData = Awaited<ReturnTyp
 }
 
 /**
- * @summary Returns all reservations for books owned by userId
+ * @summary Returns all reservations for books owned by userId and book availability
+ */
+export const borrowControllerGetOwnerReservations = (
+    userId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<BookReservation[]>(
+      {url: `/api/borrow/reservations/owner/${userId}`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getBorrowControllerGetOwnerReservationsQueryKey = (userId: string,) => [`/api/borrow/reservations/owner/${userId}`];
+
+    
+export type BorrowControllerGetOwnerReservationsQueryResult = NonNullable<Awaited<ReturnType<typeof borrowControllerGetOwnerReservations>>>
+export type BorrowControllerGetOwnerReservationsQueryError = ErrorType<void>
+
+export const useBorrowControllerGetOwnerReservations = <TData = Awaited<ReturnType<typeof borrowControllerGetOwnerReservations>>, TError = ErrorType<void>>(
+ userId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof borrowControllerGetOwnerReservations>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getBorrowControllerGetOwnerReservationsQueryKey(userId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof borrowControllerGetOwnerReservations>>> = ({ signal }) => borrowControllerGetOwnerReservations(userId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof borrowControllerGetOwnerReservations>>, TError, TData>(queryKey, queryFn, {enabled: !!(userId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Returns all resrvations made by userId and book availability
  */
 export const borrowControllerGetUserReservations = (
     userId: string,
@@ -151,3 +192,119 @@ export const useBorrowControllerGetUserReservations = <TData = Awaited<ReturnTyp
   return query;
 }
 
+/**
+ * @summary Book owner accepts one reservation
+ */
+export const borrowControllerAcceptReservation = (
+    reservationId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<void>(
+      {url: `/api/borrow/reservations/accept/${reservationId}`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getBorrowControllerAcceptReservationQueryKey = (reservationId: string,) => [`/api/borrow/reservations/accept/${reservationId}`];
+
+    
+export type BorrowControllerAcceptReservationQueryResult = NonNullable<Awaited<ReturnType<typeof borrowControllerAcceptReservation>>>
+export type BorrowControllerAcceptReservationQueryError = ErrorType<unknown>
+
+export const useBorrowControllerAcceptReservation = <TData = Awaited<ReturnType<typeof borrowControllerAcceptReservation>>, TError = ErrorType<unknown>>(
+ reservationId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof borrowControllerAcceptReservation>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getBorrowControllerAcceptReservationQueryKey(reservationId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof borrowControllerAcceptReservation>>> = ({ signal }) => borrowControllerAcceptReservation(reservationId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof borrowControllerAcceptReservation>>, TError, TData>(queryKey, queryFn, {enabled: !!(reservationId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary The owner got the book back, so it's available again
+ */
+export const borrowControllerReturnBook = (
+    bookId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<Book>(
+      {url: `/api/borrow/reservations/return/${bookId}`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getBorrowControllerReturnBookQueryKey = (bookId: string,) => [`/api/borrow/reservations/return/${bookId}`];
+
+    
+export type BorrowControllerReturnBookQueryResult = NonNullable<Awaited<ReturnType<typeof borrowControllerReturnBook>>>
+export type BorrowControllerReturnBookQueryError = ErrorType<void>
+
+export const useBorrowControllerReturnBook = <TData = Awaited<ReturnType<typeof borrowControllerReturnBook>>, TError = ErrorType<void>>(
+ bookId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof borrowControllerReturnBook>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getBorrowControllerReturnBookQueryKey(bookId);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof borrowControllerReturnBook>>> = ({ signal }) => borrowControllerReturnBook(bookId, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof borrowControllerReturnBook>>, TError, TData>(queryKey, queryFn, {enabled: !!(bookId), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Cancel reservation
+ */
+export const borrowControllerCancleReservation = (
+    reservationId: string,
+ options?: SecondParameter<typeof customInstance>,) => {
+      return customInstance<void>(
+      {url: `/api/borrow/reservations/cancel/${reservationId}`, method: 'delete'
+    },
+      options);
+    }
+  
+
+
+    export type BorrowControllerCancleReservationMutationResult = NonNullable<Awaited<ReturnType<typeof borrowControllerCancleReservation>>>
+    
+    export type BorrowControllerCancleReservationMutationError = ErrorType<unknown>
+
+    export const useBorrowControllerCancleReservation = <TError = ErrorType<unknown>,
+    
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof borrowControllerCancleReservation>>, TError,{reservationId: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+      const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof borrowControllerCancleReservation>>, {reservationId: string}> = (props) => {
+          const {reservationId} = props ?? {};
+
+          return  borrowControllerCancleReservation(reservationId,requestOptions)
+        }
+
+      return useMutation<Awaited<ReturnType<typeof borrowControllerCancleReservation>>, TError, {reservationId: string}, TContext>(mutationFn, mutationOptions)
+    }
+    

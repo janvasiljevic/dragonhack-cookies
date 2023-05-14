@@ -82,6 +82,8 @@ const useStyles = createStyles((t) => ({
     height: rem(38),
     color: t.white,
     backgroundColor: 'transparent',
+    flexDirection: 'row',
+    display: 'flex',
 
     borderColor: t.fn.variant({
       variant: 'filled',
@@ -126,7 +128,7 @@ const MainNavbar = () => {
     {
       name: 'Explore',
       icon: <IconSearch size={20} />,
-      onclick: () => navigate('/search'),
+      onclick: () => navigate('/explore'),
     },
     {
       name: 'Profile',
@@ -146,8 +148,12 @@ const MainNavbar = () => {
   };
 
   const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab.name} key={tab.name} onClick={() => tab.onclick()}>
-      <Box> {tab.icon}</Box>
+    <Tabs.Tab
+      icon={tab.icon}
+      value={tab.name}
+      key={tab.name}
+      onClick={() => tab.onclick()}
+    >
       <Box> {tab.name} </Box>
     </Tabs.Tab>
   ));
@@ -199,11 +205,10 @@ const MainNavbar = () => {
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
-                Account settings
-              </Menu.Item>
-              <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>
+              <Menu.Item
+                icon={<IconLogout size="0.9rem" stroke={1.5} />}
+                onClick={() => logout()}
+              >
                 Logout
               </Menu.Item>
             </Menu.Dropdown>

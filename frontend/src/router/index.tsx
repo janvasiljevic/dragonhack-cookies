@@ -1,5 +1,7 @@
 import AuthLayout from '@/layouts/AuthLayout';
 import NavBarLayout from '@/layouts/NavBarLayout';
+import BookPage from '@/pages/BookPage';
+import ExplorePage from '@/pages/ExplorePage';
 
 import LoginPage from '@/pages/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage';
@@ -10,6 +12,10 @@ import { createBrowserRouter } from 'react-router-dom';
 
 export type ProfileParams = {
   userId: string;
+};
+
+export type BookParams = {
+  bookId: string;
 };
 
 const router = createBrowserRouter([
@@ -31,8 +37,16 @@ const router = createBrowserRouter([
             element: <ProfilePage />,
           },
           {
+            path: '/book/:bookId',
+            element: <BookPage />,
+          },
+          {
             path: '/timeline',
             element: <TimelinePage />,
+          },
+          {
+            path: '/explore',
+            element: <ExplorePage />,
           },
         ],
       },

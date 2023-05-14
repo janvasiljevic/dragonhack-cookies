@@ -228,4 +228,43 @@ export const bookControllerRemove = (
 
       return useMutation<Awaited<ReturnType<typeof bookControllerRemove>>, TError, {id: string}, TContext>(mutationFn, mutationOptions)
     }
+    /**
+ * @summary Searches for books matching the query
+ */
+export const bookControllerSearch = (
+    search: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      return customInstance<Book[]>(
+      {url: `/api/book/search/${search}`, method: 'get', signal
+    },
+      options);
+    }
+  
+
+export const getBookControllerSearchQueryKey = (search: string,) => [`/api/book/search/${search}`];
+
     
+export type BookControllerSearchQueryResult = NonNullable<Awaited<ReturnType<typeof bookControllerSearch>>>
+export type BookControllerSearchQueryError = ErrorType<unknown>
+
+export const useBookControllerSearch = <TData = Awaited<ReturnType<typeof bookControllerSearch>>, TError = ErrorType<unknown>>(
+ search: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof bookControllerSearch>>, TError, TData>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getBookControllerSearchQueryKey(search);
+
+  
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof bookControllerSearch>>> = ({ signal }) => bookControllerSearch(search, requestOptions, signal);
+
+  const query = useQuery<Awaited<ReturnType<typeof bookControllerSearch>>, TError, TData>(queryKey, queryFn, {enabled: !!(search), ...queryOptions}) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryKey;
+
+  return query;
+}
+
