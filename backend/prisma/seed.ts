@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
-import { generate } from 'rxjs';
+import { readFileSync } from 'fs';
 
 const prisma = new PrismaClient();
 
@@ -36,41 +36,41 @@ const genereateUsers = async () => {
 const generateBooks = async () => {
   const users = await prisma.user.findMany();
 
-  users.forEach(async (user) => {
-    await prisma.book.createMany({
-      data: [
-        {
-          id: `${user.id}_hp`,
-          title: 'Harry Potter',
-          author: 'J. K. Rowling',
-          ownerId: user.id,
-          description: 'To je Harry Potter',
-          isbn: 'garbage',
-          coverUrl: 'https://m.media-amazon.com/images/I/71-++hbbERL.jpg',
-        },
-        {
-          id: `${user.id}_witcher`,
-          title: 'Witcher',
-          author: 'Andrzej Sapkowski',
-          ownerId: user.id,
-          description: 'To ni Harry Potter, je Witcher',
-          isbn: 'garbage',
-          coverUrl:
-            'https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg',
-        },
-        {
-          id: `${user.id}_1984`,
-          title: '1984',
-          author: 'George Orwell',
-          ownerId: user.id,
-          description: 'Literally 1984',
-          isbn: 'garbage',
-          coverUrl:
-            'https://kbimages1-a.akamaihd.net/c9472126-7f96-402d-ba57-5ba4c0f4b238/1200/1200/False/nineteen-eighty-four-1984-george.jpg',
-        },
-      ],
-    });
-  });
+  const books = readFileSync('./prisma/book_list.json', 'utf8');
+  let userIndex = 0;
+
+  await Promise.all(
+    books
+      .trim()
+      .split('\n')
+      .map(async (element) => {
+        const book = JSON.parse(element.trim());
+        const user = users[userIndex++ % users.length];
+
+        const inf = book.volumeInfo;
+        if (
+          !(
+            inf.title &&
+            inf.authors &&
+            inf.description &&
+            inf.imageLinks &&
+            inf.industryIdentifiers
+          )
+        )
+          return;
+
+        return await prisma.book.create({
+          data: {
+            title: book.volumeInfo.title,
+            author: book.volumeInfo.authors.join(', '),
+            description: book.volumeInfo.description,
+            coverUrl: book.volumeInfo.imageLinks.thumbnail,
+            isbn: book.volumeInfo.industryIdentifiers[0].identifier,
+            ownerId: user.id,
+          },
+        });
+      }),
+  );
 
   log('Added books to database');
 };
@@ -93,12 +93,19 @@ async function createReservation(bookId: string, userId: string) {
 }
 
 async function generateBookReservations() {
-  await createReservation('matej_hp', 'jan');
-  await createReservation('matej_hp', 'matjaz');
-  await createReservation('matej_hp', 'anja');
-  await createReservation('jan_1984', 'matjaz');
-  await createReservation('matej_1984', 'anja');
-  await createReservation('jan_1984', 'matej');
+  const books = await prisma.book.findMany();
+  const users = await prisma.user.findMany();
+
+  await Promise.all(
+    books.map(async (book) => {
+      const otherUsers = users.filter((user) => user.id !== book.ownerId);
+
+      return otherUsers.map(async (user) => {
+        if (Math.random() < 0.9) return;
+        return await createReservation(book.id, user.id);
+      });
+    }),
+  );
 
   log('Added book reservations to database');
 }
