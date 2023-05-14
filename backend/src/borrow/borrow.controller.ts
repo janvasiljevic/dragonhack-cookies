@@ -152,11 +152,17 @@ export class BorrowController {
     return this.borrowService.acceptReservation(userId, id);
   }
 
-  @Put('reservations/return/:bookId')
+  @Put('reservations/return/:bookId/:liked')
   @ApiParam({
     name: 'bookId',
     type: String,
     description: 'id of the book',
+    required: true,
+  })
+  @ApiParam({
+    name: 'liked',
+    type: String,
+    description: 'did user like the book?',
     required: true,
   })
   @ApiOperation({
@@ -178,8 +184,9 @@ export class BorrowController {
   returnBook(
     @CurrentUser() { userId }: ExtractedUAT,
     @Param('bookId') bookId: string,
+    @Param('liked') liked: boolean,
   ) {
-    return this.borrowService.returnBook(userId, bookId);
+    return this.borrowService.returnBook(userId, bookId, liked);
   }
 
   @Delete('reservations/cancel/:reservationId')
@@ -201,7 +208,7 @@ export class BorrowController {
   @ApiUnauthorizedResponse({
     description: 'User is not the owner of the book or reservation',
   })
-  cancleReservation(
+  cancelReservation(
     @CurrentUser() { userId }: ExtractedUAT,
     @Param('reservationId') reservationId: string,
   ) {

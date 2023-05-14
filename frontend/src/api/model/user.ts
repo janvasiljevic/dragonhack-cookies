@@ -18,7 +18,7 @@ export interface User {
   password: string;
   firstName: string;
   lastName: string;
-  numberOfBooksBorrowed: number;
+  numberOfBooksRead: number;
   ownedBooks: Book[];
   borrowedBooks: Book[];
   friendsTo: User[];

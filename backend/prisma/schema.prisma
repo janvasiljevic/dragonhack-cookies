@@ -25,10 +25,12 @@ model User {
     firstName String @default("Ime")
     lastName  String @default("Priimek")
 
-    numberOfBooksBorrowed Int @default(0)
+    numberOfBooksRead Int @default(0)
 
     // Books that the user owns
     ownedBooks Book[] @relation("book_to_owner")
+
+    likedBooks Book[] @relation("liked")
 
     // Books that the user has borrowed
     borrowedBooks Book[] @relation("book_to_borrower")
@@ -90,6 +92,8 @@ model Book {
 
     borrowDate DateTime?
     returnDate DateTime?
+
+    likedBy User[] @relation("liked")
 }
 
 model BookReservation {
