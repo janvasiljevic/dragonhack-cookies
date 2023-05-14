@@ -52,7 +52,9 @@ const ExplorePage = () => {
   const navigate = useNavigate();
 
   const { data: reccomendationsData, isLoading } =
-    useRecomendationsControllerGetRecomendations();
+    useRecomendationsControllerGetRecomendations({
+      query: { refetchOnMount: true },
+    });
 
   return (
     <Container w="100%">

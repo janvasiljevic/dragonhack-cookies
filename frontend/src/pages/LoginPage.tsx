@@ -107,7 +107,7 @@ const LoginPage = () => {
         className={c.inputBox}
       >
         <Title order={2} align="center" mb="md">
-          LilLib
+          ShelfShare
         </Title>
         <form onSubmit={form.onSubmit(onSubmit)}>
           <TextInput

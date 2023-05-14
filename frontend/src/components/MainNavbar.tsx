@@ -162,7 +162,7 @@ const MainNavbar = () => {
 
   const drawerItems = tabs.map((tab) => (
     <Button
-      key={tab.icon}
+      key={tab.name}
       leftIcon={tab.icon}
       w="100%"
       variant="subtle"
@@ -200,7 +200,7 @@ const MainNavbar = () => {
             <Flex align="center">
               <IconBook size={30} color={theme.white} />
               <Text ml="lg" color="white">
-                Librart
+                ShelfShare
               </Text>
             </Flex>
 

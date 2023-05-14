@@ -22,7 +22,14 @@ export class RecomendationsService {
     const index = this.pineconeClient.pineconeClient.Index('knjige');
     const ids = likedBooks.likedBooks.map((book) => book.title);
 
-    const vectors = await index.fetch({ ids: ['The Last Wish'] });
+    console.log(ids);
+
+    if (ids.length === 0)
+      return await this.prisma.book.findMany({
+        take: 5,
+      });
+
+    const vectors = await index.fetch({ ids });
     let embedding = new Array(1536).fill(0);
 
     let amount = 0;
@@ -31,6 +38,8 @@ export class RecomendationsService {
       embedding = embedding.map((value, index) => value + values[index]);
       amount++;
     }
+
+    console.log(amount);
 
     if (amount === 0)
       return await this.prisma.book.findMany({

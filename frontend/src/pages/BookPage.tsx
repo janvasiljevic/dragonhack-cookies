@@ -26,6 +26,7 @@ import {
   Title,
   UnstyledButton,
 } from '@mantine/core';
+import { IconHeartFilled } from '@tabler/icons-react';
 import { IconCheck } from '@tabler/icons-react';
 import {
   IconBook2,
@@ -194,17 +195,17 @@ const BookPage = () => {
         <Group mt="lg">
           <Button
             variant="light"
-            leftIcon={<IconHeart />}
+            leftIcon={youLikeTheBook ? <IconHeartFilled /> : <IconHeart />}
             onClick={() => likeButton(bookData?.id, !youLikeTheBook)}
           >
-            Like book
+            {youLikeTheBook ? 'Liked' : 'Like'}
             <span style={{ marginLeft: rem(10), opacity: 0.8 }}>
               {bookData.likedBy.length}
             </span>
           </Button>
           <Text c="dimmed">
-            Let the community know you enjoyed the book and received
-            personalized reccomendations!
+            Let the community know you enjoyed the book and receive personalized
+            reccomendations!
           </Text>
         </Group>
         <Divider my="lg" />

@@ -113,7 +113,7 @@ export class BookService {
   async search(query: string) {
     // Search the books using raw SQL and postgresql trigram similarity
     const result = await this.prisma.$queryRaw<Book[]>(
-      Prisma.sql`SELECT * FROM public."Book" WHERE SIMILARITY(title, ${query}) > 0.2 OR SIMILARITY(author, ${query}) > 0.2 ORDER BY SIMILARITY(title, ${query});`,
+      Prisma.sql`SELECT * FROM public."Book" WHERE SIMILARITY(title, ${query}) > 0.2 OR SIMILARITY(author, ${query}) > 0.2 ORDER BY SIMILARITY(title, ${query}) DESC;`,
     );
 
     return result;
