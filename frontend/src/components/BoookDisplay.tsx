@@ -13,6 +13,7 @@ const useStyles = createStyles((t) => ({
     position: 'relative',
     flexDirection: 'column',
     justifyContent: 'end',
+    padding: t.spacing.sm,
 
     '&:hover': {
       backgroundColor: t.colors.gray[0],

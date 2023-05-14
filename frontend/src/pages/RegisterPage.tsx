@@ -55,9 +55,10 @@ const useStyles = createStyles((t) => ({
   },
 }));
 
-const LoginPage = () => {
-  const navigate = useNavigate();
+const RegisterPage = () => {
+  const RegisterPage = useNavigate();
   const { classes: c } = useStyles();
+  const navigate = useNavigate();
 
   const login = useAuthControllerLogin({
     mutation: {
@@ -138,4 +139,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

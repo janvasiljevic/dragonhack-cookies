@@ -6,6 +6,7 @@ import ExplorePage from '@/pages/ExplorePage';
 import LoginPage from '@/pages/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import ProfilePage from '@/pages/ProfilePage';
+import RegisterPage from '@/pages/RegisterPage';
 import TimelinePage from '@/pages/TimelinePage';
 
 import { createBrowserRouter } from 'react-router-dom';
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
   },
   {
     path: '/',

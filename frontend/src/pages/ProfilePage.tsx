@@ -10,9 +10,11 @@ import {
   Flex,
   Grid,
   Group,
+  ScrollArea,
   Text,
   Timeline,
   Title,
+  UnstyledButton,
   createStyles,
   rem,
 } from '@mantine/core';
@@ -20,11 +22,9 @@ import {
   IconBook,
   IconGitBranch,
   IconGitCommit,
-  IconGitPullRequest,
-  IconMessageDots,
   IconPlus,
 } from '@tabler/icons-react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 const useStyles = createStyles((t) => ({
   username: {
@@ -52,6 +52,10 @@ const useStyles = createStyles((t) => ({
   },
   icon: {
     color: t.colors.gray[6],
+  },
+  flexLibrary: {
+    display: 'flex',
+    flexDirection: 'row',
   },
 }));
 
@@ -81,6 +85,7 @@ const ProfilePage = () => {
   const { userId } = useParams<ProfileParams>();
   const { classes: c } = useStyles();
   const user = useAppStore((state) => state.user);
+  const navigate = useNavigate();
 
   const { data: userProfileData, isLoading } = useUserControllerFindOne(
     userId || '',
@@ -99,7 +104,7 @@ const ProfilePage = () => {
     <Container size="md" w={'100%'}>
       <Flex direction="column">
         <Text className={c.username}>
-          {userProfileData.firstName} {userProfileData.lastName}{' '}
+          {userProfileData.firstName} {userProfileData.lastName}
         </Text>
         <Grid mt="lg">
           <Grid.Col sm={4}>
@@ -127,13 +132,18 @@ const ProfilePage = () => {
         <Title order={1} className={c.sectionTitles}>
           Library
         </Title>
-        <Flex direction="row" gap={'lg'} pt="lg">
-          {userProfileData.ownedBooks.map((book) => (
-            <Box style={{ height: rem(300), width: rem(180) }}>
-              <BookDisplay book={book} />
-            </Box>
-          ))}
-        </Flex>
+        <ScrollArea pt="lg" className={c.flexLibrary}>
+          <Flex gap="md">
+            {userProfileData.ownedBooks.map((book) => (
+              <UnstyledButton
+                onClick={() => navigate(`/book/${book.id}`)}
+                style={{ height: rem(300), width: rem(180), flexShrink: 0 }}
+              >
+                <BookDisplay book={book} />
+              </UnstyledButton>
+            ))}
+          </Flex>
+        </ScrollArea>
         {user?.id === userProfileData.id && (
           <Group pt="lg" w="100%" position="right">
             <Button leftIcon={<IconPlus />} variant="outline">
@@ -148,7 +158,7 @@ const ProfilePage = () => {
             You&apos;ve created new branch{' '}
             <Text variant="link" component="span" inherit>
               fix-notifications
-            </Text>{' '}
+            </Text>
             from master
           </Text>
           <Text size="xs" mt={4}>

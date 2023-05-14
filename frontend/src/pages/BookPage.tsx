@@ -1,5 +1,6 @@
 import { useBookControllerFindOne } from '@/api/book/book';
 import {
+  useBorrowControllerAcceptReservation,
   useBorrowControllerCancleReservation,
   useBorrowControllerGetBookReservations,
   useBorrowControllerReserve,
@@ -54,6 +55,9 @@ const useStyles = createStyles((t) => ({
     fontWeight: 700,
     fontFamily: t.fontFamilyMonospace,
   },
+  desc: {
+    fontSize: t.fontSizes.lg,
+  },
 }));
 
 const BookPage = () => {
@@ -78,6 +82,9 @@ const BookPage = () => {
   const { mutateAsync: cancelReservation } =
     useBorrowControllerCancleReservation();
 
+  const { mutateAsync: acceptReservation } =
+    useBorrowControllerAcceptReservation();
+
   // Handlers
   const reserveBookClick = async (bookId: string) => {
     await reserveBook({ bookId });
@@ -85,6 +92,25 @@ const BookPage = () => {
   };
 
   const cancelReservationClick = async (reservationId: string) => {
+    await cancelReservation({ reservationId });
+    await refetchReservationData();
+  };
+
+  const acceptReservationClick = async (reservationId: string) => {
+    await acceptReservation({ reservationId });
+    await refetchReservationData();
+  };
+
+  const cancelOwnReservationClick = async () => {
+    // Find the reservation id of the user
+    const reservationId = reservationData?.find(
+      (reservation) => reservation.userId === user?.id,
+    )?.id;
+
+    if (!reservationId) {
+      return;
+    }
+
     await cancelReservation({ reservationId });
     await refetchReservationData();
   };
@@ -105,16 +131,17 @@ const BookPage = () => {
     <Container size="md" w={'100%'}>
       <motion.div animate={{ opacity: 1 }} initial={{ opacity: 0 }}>
         <Flex className={c.flex}>
-          <Box style={{ width: rem(300), height: rem(420) }}>
+          <Box style={{ width: rem(300), height: rem(420), flexShrink: 0 }}>
             <BookDisplay book={bookData} />
           </Box>
           <Flex direction="column" className={c.flex2}>
             <Text className={c.title}> {bookData.title}</Text>
             <Text className={c.author}> {bookData.author}</Text>
+            <Text className={c.desc}>{bookData.description}</Text>
           </Flex>
         </Flex>
 
-        {isBookOwner && reservationData && (
+        {isBookOwner && reservationData && bookData.status === 'AVAILABLE' && (
           <Stack spacing="xs" mt={20}>
             <Title order={1} className={c.sectionTitles}>
               Pending reservations
@@ -124,13 +151,13 @@ const BookPage = () => {
                 <UnstyledButton
                   onClick={() => navigate(`/profile/${r.userId}`)}
                 >
-                  <Text>
+                  <Text style={{ textDecoration: 'underline' }}>
                     {r.user.firstName} {r.user.lastName}
                   </Text>
                 </UnstyledButton>
                 <Group spacing="xs">
                   <Button
-                    onClick={() => cancelReservationClick(r.id)}
+                    onClick={() => acceptReservationClick(r.id)}
                     variant="light"
                     color="teal"
                     leftIcon={<IconX />}
@@ -151,6 +178,15 @@ const BookPage = () => {
           </Stack>
         )}
 
+        {isBookOwner && reservationData && bookData.status !== 'AVAILABLE' && (
+          <Stack spacing="xs" mt={20}>
+            <Title order={1} className={c.sectionTitles}>
+              Status
+            </Title>
+            <Text> {bookData.status} </Text>
+          </Stack>
+        )}
+
         {!isBookOwner &&
           bookData.status === 'AVAILABLE' &&
           !youHaveReservedThisBook && (
@@ -158,7 +194,7 @@ const BookPage = () => {
               <Text> This book is currently available! </Text>
               <Button
                 onClick={() => reserveBookClick(bookData.id)}
-                variant="outline"
+                variant="light"
                 leftIcon={<IconBook2 />}
               >
                 Request book
@@ -172,9 +208,10 @@ const BookPage = () => {
             <Group spacing="xs" mt={20} w="100%" position="apart">
               <Text> You have already reserved this book </Text>
               <Button
-                onClick={() => reserveBookClick(bookData.id)}
-                variant="outline"
+                onClick={() => cancelOwnReservationClick()}
+                variant="light"
                 leftIcon={<IconX />}
+                color="red"
               >
                 Cancel reservation
               </Button>
