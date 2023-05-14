@@ -133,6 +133,8 @@ const BookPage = () => {
   // Check if the user is the owner of the book
   const isBookOwner = user?.id === bookData?.ownerId;
 
+  const youHaveBookInPossesion = bookData?.borrowerId === user?.id;
+
   // Check if the user has already reserved the book
   const youHaveReservedThisBook = reservationData?.some(
     (reservation) => reservation.userId === user?.id,
@@ -230,7 +232,11 @@ const BookPage = () => {
               When the other user returns the book to you, please confirm it{' '}
             </Text>
             <Group position="apart" mt="sm">
-              <Button leftIcon={<IconHandGrab />} variant="subtle">
+              <Button
+                onClick={() => returnBookClick(bookData.id)}
+                leftIcon={<IconHandGrab />}
+                variant="subtle"
+              >
                 The book was already returned
               </Button>
               <Button
@@ -281,6 +287,19 @@ const BookPage = () => {
             <Button variant="outline" leftIcon={<IconBook2 />} disabled>
               Request book
             </Button>
+          </Group>
+        )}
+
+        {youHaveBookInPossesion && (
+          <Group spacing="xs" mt={20} w="100%">
+            <IconBook2 />
+            <Text c="dimmed"> You have this book in your possesion </Text>
+            <Text c="pink">
+              {' '}
+              You have till{' '}
+              {parseISO(bookData.returnDate || '').toLocaleDateString()} to
+              return it
+            </Text>
           </Group>
         )}
       </motion.div>
