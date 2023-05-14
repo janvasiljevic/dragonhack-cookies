@@ -152,17 +152,11 @@ export class BorrowController {
     return this.borrowService.acceptReservation(userId, id);
   }
 
-  @Put('reservations/return/:bookId/:liked')
+  @Put('reservations/return/:bookId')
   @ApiParam({
     name: 'bookId',
     type: String,
     description: 'id of the book',
-    required: true,
-  })
-  @ApiParam({
-    name: 'liked',
-    type: String,
-    description: 'did user like the book?',
     required: true,
   })
   @ApiOperation({
@@ -184,9 +178,8 @@ export class BorrowController {
   returnBook(
     @CurrentUser() { userId }: ExtractedUAT,
     @Param('bookId') bookId: string,
-    @Param('liked') liked: boolean,
   ) {
-    return this.borrowService.returnBook(userId, bookId, liked);
+    return this.borrowService.returnBook(userId, bookId);
   }
 
   @Delete('reservations/cancel/:reservationId')

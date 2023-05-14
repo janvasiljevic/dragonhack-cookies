@@ -100,4 +100,42 @@ export class BookService {
       },
     });
   }
+
+  async like(userId: string, bookId: string, liked: boolean) {
+    const book = await this.prisma.book.findUnique({
+      where: {
+        id: bookId,
+      },
+    });
+
+    if (!book) throw new NotFoundException('Knjiga ne obstaja');
+
+    if (liked) {
+      return await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          likedBooks: {
+            connect: {
+              id: bookId,
+            },
+          },
+        },
+      });
+    } else {
+      return await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          likedBooks: {
+            disconnect: {
+              id: bookId,
+            },
+          },
+        },
+      });
+    }
+  }
 }
